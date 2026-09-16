@@ -8,7 +8,7 @@ Reusable Codex skills for product research, design, and creation workflows.
 
 Research one current mobile product need, narrow it into a solo-developer-friendly App concept, derive an original visual system from product behavior, and deliver a coherent set of validated concept images.
 
-This skill intentionally contains no social-platform publishing workflow, post copy, hashtags, channel-specific dimensions, or upload automation.
+The workflow stays focused on evidence, product definition, visual reasoning, concept images, and deterministic validation.
 
 Path: [`skills/daily-app-concept`](skills/daily-app-concept/)
 
