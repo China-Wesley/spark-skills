@@ -1,6 +1,6 @@
-# Spark to Screen
+# Spark Skills
 
-From evidence to interface: reusable Codex skills for product research, design, and creation workflows.
+Reusable Codex skills for turning ideas into concrete product and design workflows.
 
 ## Skills
 
