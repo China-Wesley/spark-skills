@@ -1,22 +1,39 @@
 # Spark Skills
 
-**Reusable AI workflows for turning sparks into concrete work.**
+**Reusable Codex skills for building and shipping independent apps.**
 
 [English](README.md) · [简体中文](README.zh-CN.md)
 
-Spark Skills is a growing collection of Codex skills built through daily product exploration, visual design practice, independent making, and AI tutorial creation.
+Spark Skills is a growing collection of Codex skills designed to help people become independent app developers. It breaks the path from discovering a real need to shipping an App Store product into focused workflows that can be used one stage at a time.
 
-Each skill turns a repeatable creative process into an executable workflow: clear triggers, evidence and decision criteria, practical steps, concrete deliverables, and validation when the result can be checked deterministically. The repository is maintained as a long-term creator project, with new skills added as the underlying workflows become useful and stable enough to reuse.
+Each skill covers a practical part of the product lifecycle with clear triggers, decision criteria, concrete deliverables, and deterministic validation where possible. The long-term goal is a connected skill set that can guide a solo developer from opportunity discovery, product definition, and interface design through implementation, testing, App Store submission, launch, and iteration.
 
 ## What belongs here
 
-- **Product and design workflows** that move from real user signals to a focused product concept.
-- **Creator workflows** for research, ideation, production, review, and publishing preparation.
-- **AI tutorial workflows** that make a technique reproducible instead of leaving it as a one-off demo.
-- **Validation tools** for checking files, structure, consistency, and delivery requirements.
-- **Focused references** that preserve the knowledge a skill needs without overloading its main instructions.
+- **Demand discovery** based on current user feedback, market signals, and existing alternatives.
+- **Product validation and definition** for choosing a narrow user, problem, core action, and MVP.
+- **UX, interface, and prototype workflows** that turn product behavior into a usable experience.
+- **Implementation and testing workflows** for building a reliable App as a solo developer.
+- **App Store release workflows** covering product pages, privacy, compliance, review, and launch readiness.
+- **Post-launch workflows** for learning from usage, feedback, and business results.
+- **Validation tools and focused references** that make every stage easier to review and repeat.
 
-The goal is to make every skill useful beyond a single conversation. A good skill should help another Codex instance make better decisions and produce a result that can be reviewed directly.
+The goal is to turn independent development into a visible sequence of decisions and deliverables. Each skill should improve judgment at one stage and produce work that can be reviewed directly or handed to the next stage.
+
+## The independent app path
+
+```mermaid
+flowchart LR
+    A[Discover a need] --> B[Validate demand]
+    B --> C[Define the MVP]
+    C --> D[Design the experience]
+    D --> E[Build the App]
+    E --> F[Test and polish]
+    F --> G[Submit to the App Store]
+    G --> H[Launch and learn]
+```
+
+The repository will grow along this path. The available skill catalog shows what can be used today; the roadmap shows the stages still being developed.
 
 ## Available skills
 
@@ -26,7 +43,7 @@ The goal is to make every skill useful beyond a single conversation. A good skil
 
 ### `daily-app-concept`
 
-This is the first workflow in Spark Skills. It grew out of a daily design and product-idea practice, where a visually attractive concept still had to answer four basic questions:
+This is the first workflow in Spark Skills and covers the opening stages of independent development: finding a need, validating the opportunity, defining a focused product, and making its core experience visible. Every concept must answer four basic questions:
 
 1. Is there credible evidence that the problem exists?
 2. Can one person build and test a narrow solution?
@@ -51,7 +68,7 @@ Read the full instructions in [`skills/daily-app-concept/SKILL.md`](skills/daily
 
 Spark Skills follows a few recurring principles:
 
-- **Evidence before commitment.** Separate direct user feedback, market proof, creator claims, and inference.
+- **Evidence before commitment.** Separate direct user feedback, market proof, company or founder claims, and inference.
 - **Narrow the product.** Define one target user, one trigger, one core action, and one immediate result before adding features.
 - **Respect behavior cost.** Favor actions users already take, system-readable data, and fast feedback over workflows that demand constant manual maintenance.
 - **Let behavior shape the visual system.** Colors, containers, type, motion, and components should communicate information, state, or action.
@@ -122,19 +139,22 @@ Each skill keeps its main instructions in `SKILL.md` and adds supporting resourc
 
 ## Roadmap
 
-Spark Skills will grow alongside the creator work behind it. Planned directions include:
+The target is a practical end-to-end toolkit for independent App development. Planned stages include:
 
-- More product research and visual concept skills.
-- Reusable workflows for AI tutorial research, demonstration, and production.
-- Creator tools for turning experiments into clear, useful content.
-- Independent-maker workflows for validation, prototyping, and launch preparation.
-- Stronger automated checks and realistic example outputs for mature skills.
+- **Discover:** identify narrow problems from user feedback, behavior, and market evidence.
+- **Validate:** compare alternatives, test assumptions, score feasibility, and define success signals.
+- **Define:** write the product promise, user flow, MVP boundary, pricing hypothesis, and technical approach.
+- **Design:** create information architecture, interaction states, visual systems, prototypes, and App Store-ready assets.
+- **Build:** scaffold the project, implement the core loop, handle local data or services, and keep scope controlled.
+- **Test:** verify behavior, accessibility, performance, edge cases, privacy, and release readiness.
+- **Ship:** prepare metadata, screenshots, privacy disclosures, compliance materials, TestFlight, and App Store submission.
+- **Learn:** collect useful feedback and metrics, prioritize iterations, and decide whether to improve, reposition, or stop.
 
-New skills will be added when a workflow has been exercised enough to capture useful judgment, rather than only generic instructions.
+New skills will be added when a workflow has been exercised enough to capture useful judgment and produce a reliable handoff to the next stage.
 
 ## Contributing and feedback
 
-Suggestions, real usage reports, and focused improvements are welcome through GitHub Issues. When proposing a new skill, describe the recurring task, what decisions the skill should improve, and what a reviewable result looks like.
+Suggestions, real usage reports, and focused improvements are welcome through GitHub Issues. When proposing a new skill, describe the stage of independent development it supports, the decisions it should improve, and what a reviewable result looks like.
 
 ## License
 
