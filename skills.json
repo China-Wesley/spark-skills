@@ -2,7 +2,12 @@
   "schema_version": 1,
   "updated": "2026-09-16",
   "repository": "China-Wesley/spark-skills",
-  "purpose": "Reusable Codex skills for the independent App lifecycle, from demand discovery to App Store release and iteration.",
+  "format": {
+    "name": "Agent Skills",
+    "specification": "https://agentskills.io/specification",
+    "portable_entrypoint": "SKILL.md"
+  },
+  "purpose": "Portable Agent Skills for the independent App lifecycle, from demand discovery to App Store release and iteration.",
   "lifecycle_stages": [
     {
       "id": "discover",
@@ -60,6 +65,7 @@
       "entrypoint": "skills/daily-app-concept/SKILL.md",
       "status": "available",
       "category": "product-discovery",
+      "compatibility": "Agent Skills-compatible clients, or any file-based Agent that can load SKILL.md instructions and supporting resources.",
       "lifecycle_stages": [
         "discover",
         "validate",

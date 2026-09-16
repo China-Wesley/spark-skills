@@ -1,25 +1,27 @@
 # Spark Skills
 
-**帮助每个人用 Codex 完成从需求发现到 App 上架的独立开发。**
+**用可移植的 Agent Skills，帮助每个人完成从需求发现到 App 上架的独立开发。**
 
 [English](README.md) · [简体中文](README.zh-CN.md)
 
-Spark Skills 是一个帮助大家成为独立开发者的 Codex Skills 仓库。它把“发现真实需求，做出产品，再把 App 上架”这条复杂路径拆成可以逐步调用的工作流。
+Spark Skills 是一个帮助大家成为独立开发者的通用 Agent Skills 仓库。它把“发现真实需求，做出产品，再把 App 上架”这条复杂路径拆成可以逐步调用的工作流。
 
 每个 Skill 负责产品生命周期中的一个具体阶段，写清何时触发、依据什么做判断、如何推进、需要交付哪些文件，以及哪些结果可以通过脚本校验。长期目标是形成一套相互衔接的 Skills，让一个人也能从机会发现、产品定义和界面设计，一直走到开发、测试、App Store 审核、发布和后续迭代。
 
+核心 Skill 遵循开放的 [Agent Skills 规范](https://agentskills.io/specification)：每个 Skill 都以可移植的 `SKILL.md` 为入口，并可按需附带 `references/`、`scripts/` 和 `assets/`。客户端专属元数据只是可选适配层，不影响其他 Agent 理解和执行核心工作流。
+
 ## 30 秒开始
 
-可以直接让 Codex 阅读仓库，并根据你目前所处的阶段选择和安装 Skill：
+可以直接让当前 Agent 阅读仓库，并根据你目前所处的阶段选择和安装 Skill：
 
 ```text
-阅读 https://github.com/China-Wesley/spark-skills 和其中的 skills.json，根据我当前所处的 App 开发阶段推荐最相关的可用 Skill，说明它会交付什么，然后为 Codex 安装。
+阅读 https://github.com/China-Wesley/spark-skills 和其中的 skills.json，根据我当前所处的 App 开发阶段推荐最相关的可用 Skill，说明它会交付什么，然后把来源目录安装到当前 Agent 支持的 Skills 目录。
 ```
 
 如果准备直接开始需求发现和产品定义：
 
 ```text
-从 https://github.com/China-Wesley/spark-skills 安装 $daily-app-concept，并用它发现和验证一个移动 App 机会。
+从 https://github.com/China-Wesley/spark-skills 安装 daily-app-concept Skill，并用它发现和验证一个移动 App 机会。
 ```
 
 ## 这个仓库会收录什么
@@ -112,12 +114,15 @@ git clone https://github.com/China-Wesley/spark-skills.git
 cd spark-skills
 ```
 
-把需要的 Skill 复制或链接到 Codex Skills 目录。如果准备长期更新这个仓库，使用软链接会更方便：
+Agent Skills 规范定义 Skill 包的结构，具体安装目录由各个 Agent 决定。请把目标路径设置为当前 Agent 文档规定的用户级或项目级 Skills 目录。如果准备长期更新这个仓库，使用软链接会更方便：
 
 ```bash
-mkdir -p "$HOME/.codex/skills"
-ln -s "$(pwd)/skills/daily-app-concept" "$HOME/.codex/skills/daily-app-concept"
+SPARK_AGENT_SKILLS_DIR="/当前Agent使用的Skills绝对路径"
+mkdir -p "$SPARK_AGENT_SKILLS_DIR"
+ln -s "$(pwd)/skills/daily-app-concept" "$SPARK_AGENT_SKILLS_DIR/daily-app-concept"
 ```
+
+如果当前 Agent 支持从 Git 仓库和子目录直接安装，可以读取 [`skills.json`](skills.json) 中的 `install.source`。真正可移植的安装单元是单个 Skill 目录，而不是整个仓库。
 
 以后拉取仓库更新，软链接安装的 Skill 也会同步更新：
 
@@ -127,15 +132,21 @@ git pull --ff-only
 
 ## 使用
 
-可以在任务中明确调用 Skill：
+不同 Agent 的显式调用语法可能不同。可以在请求中直接写出 Skill 名称，也可以由兼容的 Agent 根据 frontmatter 描述自动选择：
 
 ```text
-使用 $daily-app-concept 调研一个近期移动端需求，并交付包含实际图片的完整 App 概念。
+使用 daily-app-concept Skill 调研一个近期移动端需求，并交付包含实际图片的完整 App 概念。
 ```
 
-安装后，当用户请求与 Skill 描述相符时，Codex 也可以自动选择它。
-
 使用前先阅读对应的 `SKILL.md`。部分 Skill 会按需读取 `references/` 中的详细规则，调用 `scripts/` 中的工具，或使用 `assets/` 中的模板与素材。
+
+## 可移植性约定
+
+- `SKILL.md` 是可移植的唯一事实源，必需 frontmatter 保持在开放 Agent Skills 规范范围内。
+- Skill 内使用相对于自身目录的链接，使整个文件夹可以独立复制或软链接安装。
+- 核心指令描述所需能力，不预设某个厂商的工具名称或调用语法。
+- 客户端专属文件只是可选适配器；其他 Agent 即使忽略它们，也不会丢失核心工作流。
+- 环境要求用联网、文件系统或图像生成等可移植能力描述，不把工作流绑定到某个产品名称。
 
 ## Agent 发现与安装协议
 
@@ -167,7 +178,7 @@ spark-skills/
     └── daily-app-concept/
         ├── SKILL.md
         ├── agents/
-        │   └── openai.yaml
+        │   └── openai.yaml       # 可选的 OpenAI 客户端元数据
         ├── references/
         │   ├── deliverables.md
         │   ├── evidence-and-selection.md
@@ -178,7 +189,7 @@ spark-skills/
 
 每个 Skill 都把主要指令放在 `SKILL.md` 中，只在确实有用时增加辅助资源：
 
-- `agents/`：面向界面的名称、描述和调用配置。
+- `agents/`：可选的客户端专属元数据，核心 Skill 不依赖它。
 - `references/`：只在相关任务中加载的详细知识。
 - `scripts/`：可重复运行或需要确定性结果的操作。
 - `assets/`：用于生成结果的模板、图片或其他源文件。
@@ -188,6 +199,7 @@ spark-skills/
 只有当一套流程经过足够实践，能够沉淀出可靠判断并顺利交接给下一阶段时，才会整理成新的 Skill。每个新增 Skill 都应该具备：
 
 - 精确的名称和描述，让自动发现足够可靠。
+- 保持兼容开放 Agent Skills 规范的 frontmatter。
 - 清楚的生命周期阶段、触发条件、范围边界、输入、输出和交接关系。
 - 简洁的 `SKILL.md`，把条件性细节放进 `references/`。
 - 只在可重复执行或确定性校验确实有价值时增加脚本。

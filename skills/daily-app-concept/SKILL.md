@@ -1,6 +1,9 @@
 ---
 name: daily-app-concept
 description: 从近期真实用户反馈中筛选一个适合个人开发者验证的移动 App 需求，定义窄产品，结合优秀设计案例提炼方法，并生成一套原创、可读的 App 概念示意图。用于独立 App 开发的需求发现、机会验证、产品定义和视觉概念阶段；不负责实际 App 编码或 App Store 提交。
+license: MIT
+metadata:
+  compatibility: 完整流程需要联网调研能力、可写工作区和图像生成能力；不依赖特定 Agent 或厂商专属工具。
 ---
 
 # Daily App Concept

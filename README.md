@@ -1,25 +1,27 @@
 # Spark Skills
 
-**Reusable Codex skills for building and shipping independent apps.**
+**Portable Agent Skills for building and shipping independent apps.**
 
 [English](README.md) · [简体中文](README.zh-CN.md)
 
-Spark Skills is a growing collection of Codex skills designed to help people become independent app developers. It breaks the path from discovering a real need to shipping an App Store product into focused workflows that can be used one stage at a time.
+Spark Skills is a growing collection of portable Agent Skills designed to help people become independent app developers. It breaks the path from discovering a real need to shipping an App Store product into focused workflows that can be used one stage at a time.
 
 Each skill covers a practical part of the product lifecycle with clear triggers, decision criteria, concrete deliverables, and deterministic validation where possible. The long-term goal is a connected skill set that can guide a solo developer from opportunity discovery, product definition, and interface design through implementation, testing, App Store submission, launch, and iteration.
 
+The core packages follow the open [Agent Skills specification](https://agentskills.io/specification): each skill has a portable `SKILL.md` entrypoint and may include `references/`, `scripts/`, and `assets/`. Client-specific metadata is optional and never required to understand or execute the core workflow.
+
 ## 30-second start
 
-Ask Codex to read the repository and install the skill that matches your current stage:
+Ask your Agent to read the repository and install the skill that matches your current stage:
 
 ```text
-Read https://github.com/China-Wesley/spark-skills and its skills.json. Recommend the most relevant available skill for my current App-development stage, explain what it will deliver, and install it for Codex.
+Read https://github.com/China-Wesley/spark-skills and its skills.json. Recommend the most relevant available skill for my current App-development stage, explain what it will deliver, and install its source folder in the skills directory supported by this Agent.
 ```
 
 To start directly with demand discovery and product definition:
 
 ```text
-Install $daily-app-concept from https://github.com/China-Wesley/spark-skills and use it to find and validate one mobile App opportunity.
+Install the daily-app-concept skill from https://github.com/China-Wesley/spark-skills and use it to find and validate one mobile App opportunity.
 ```
 
 ## What belongs here
@@ -112,12 +114,15 @@ git clone https://github.com/China-Wesley/spark-skills.git
 cd spark-skills
 ```
 
-Install a skill by copying it or linking it into your Codex skills directory. A symbolic link is convenient when you plan to update the repository regularly:
+The Agent Skills format defines the package, while each Agent decides where it discovers installed skills. Set the destination to the user-level or project-level skills directory documented by your Agent. A symbolic link is convenient when you plan to update this repository regularly:
 
 ```bash
-mkdir -p "$HOME/.codex/skills"
-ln -s "$(pwd)/skills/daily-app-concept" "$HOME/.codex/skills/daily-app-concept"
+SPARK_AGENT_SKILLS_DIR="/absolute/path/to/your-agent/skills"
+mkdir -p "$SPARK_AGENT_SKILLS_DIR"
+ln -s "$(pwd)/skills/daily-app-concept" "$SPARK_AGENT_SKILLS_DIR/daily-app-concept"
 ```
+
+If your Agent supports installation from a Git repository and subdirectory, use the `install.source` value in [`skills.json`](skills.json). The portable unit is the individual skill directory, not the whole repository.
 
 Pulling future repository updates will then update the linked skill:
 
@@ -127,15 +132,21 @@ git pull --ff-only
 
 ## Use
 
-Invoke a skill explicitly by name:
+Invocation syntax varies by Agent. Name the skill directly in your request, or let a compatible Agent select it from the frontmatter description:
 
 ```text
-Use $daily-app-concept to research one current mobile need and produce a complete App concept with actual images.
+Use the daily-app-concept skill to research one current mobile need and produce a complete App concept with actual images.
 ```
 
-Codex can also select an installed skill automatically when the request matches its description.
-
 Before using a skill, read its `SKILL.md`. Some skills may route to additional files in `references/`, use helpers in `scripts/`, or include reusable materials in `assets/`.
+
+## Portability contract
+
+- `SKILL.md` is the portable source of truth. Its required frontmatter stays within the open Agent Skills specification.
+- Relative links inside a skill resolve from the skill directory, so the folder can be copied or linked independently.
+- Core instructions describe capabilities instead of assuming a vendor-specific tool name or invocation syntax.
+- Client-specific files are optional adapters. An Agent that does not recognize them can ignore them without losing the workflow.
+- Environment requirements are described as portable capabilities such as network, filesystem, or image generation access, without binding the workflow to a product name.
 
 ## Agent discovery protocol
 
@@ -167,7 +178,7 @@ spark-skills/
     └── daily-app-concept/
         ├── SKILL.md
         ├── agents/
-        │   └── openai.yaml
+        │   └── openai.yaml       # Optional OpenAI client metadata
         ├── references/
         │   ├── deliverables.md
         │   ├── evidence-and-selection.md
@@ -178,7 +189,7 @@ spark-skills/
 
 Each skill keeps its main instructions in `SKILL.md` and adds supporting resources only when they improve the workflow:
 
-- `agents/` contains UI-facing metadata and invocation settings.
+- `agents/` contains optional client-specific metadata. The core skill never depends on it.
 - `references/` contains detailed guidance loaded only when relevant.
 - `scripts/` contains repeatable or deterministic operations.
 - `assets/` may contain templates or source materials intended for generated output.
@@ -188,6 +199,7 @@ Each skill keeps its main instructions in `SKILL.md` and adds supporting resourc
 New skills are added when a workflow has been exercised enough to capture useful judgment and produce a reliable handoff to the next stage. Every addition should have:
 
 - A precise name and description that make automatic discovery reliable.
+- Frontmatter that stays compatible with the open Agent Skills specification.
 - A clear lifecycle stage, trigger, scope boundary, input, output, and handoff.
 - A concise `SKILL.md`, with conditional detail moved into `references/`.
 - Scripts only where repeatability or deterministic validation adds real value.

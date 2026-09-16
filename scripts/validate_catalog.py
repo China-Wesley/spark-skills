@@ -53,6 +53,18 @@ def validate(root: Path) -> dict[str, Any]:
         if not non_empty_string(catalog.get(field)):
             errors.append(f"{field} must be a non-empty string")
 
+    skill_format = catalog.get("format")
+    if not isinstance(skill_format, dict):
+        errors.append("format must be an object")
+    else:
+        if skill_format.get("name") != "Agent Skills":
+            errors.append("format.name must be Agent Skills")
+        specification = skill_format.get("specification")
+        if not non_empty_string(specification) or not specification.startswith("https://"):
+            errors.append("format.specification must be an HTTPS URL")
+        if skill_format.get("portable_entrypoint") != "SKILL.md":
+            errors.append("format.portable_entrypoint must be SKILL.md")
+
     stages = catalog.get("lifecycle_stages")
     stage_ids: set[str] = set()
     if not isinstance(stages, list) or not stages:
@@ -96,7 +108,7 @@ def validate(root: Path) -> dict[str, Any]:
 
         if skill.get("status") not in VALID_SKILL_STATUSES:
             errors.append(f"{label}.status is invalid")
-        for field in ("category", "summary", "summary_zh"):
+        for field in ("category", "compatibility", "summary", "summary_zh"):
             if not non_empty_string(skill.get(field)):
                 errors.append(f"{label}.{field} must be a non-empty string")
 
