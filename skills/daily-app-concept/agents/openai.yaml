@@ -1,4 +1,4 @@
 interface:
   display_name: "Daily App Concept"
-  short_description: "每天从真实需求生成一套原创 App 产品与视觉概念"
-  default_prompt: "Use $daily-app-concept to research one real mobile product need and create a coherent App concept image set."
+  short_description: "从真实需求到独立 App MVP 与原创视觉概念"
+  default_prompt: "Use $daily-app-concept to discover and validate one real mobile need, define a focused MVP, and create a coherent App concept image set."

@@ -8,6 +8,20 @@ Spark Skills is a growing collection of Codex skills designed to help people bec
 
 Each skill covers a practical part of the product lifecycle with clear triggers, decision criteria, concrete deliverables, and deterministic validation where possible. The long-term goal is a connected skill set that can guide a solo developer from opportunity discovery, product definition, and interface design through implementation, testing, App Store submission, launch, and iteration.
 
+## 30-second start
+
+Ask Codex to read the repository and install the skill that matches your current stage:
+
+```text
+Read https://github.com/China-Wesley/spark-skills and its skills.json. Recommend the most relevant available skill for my current App-development stage, explain what it will deliver, and install it for Codex.
+```
+
+To start directly with demand discovery and product definition:
+
+```text
+Install $daily-app-concept from https://github.com/China-Wesley/spark-skills and use it to find and validate one mobile App opportunity.
+```
+
 ## What belongs here
 
 - **Demand discovery** based on current user feedback, market signals, and existing alternatives.
@@ -33,13 +47,26 @@ flowchart LR
     G --> H[Launch and learn]
 ```
 
-The repository will grow along this path. The available skill catalog shows what can be used today; the roadmap shows the stages still being developed.
+The repository will grow along this path. The lifecycle table below separates what can be used today from stages still being developed.
+
+| Stage | Core question | Skill | Status |
+| --- | --- | --- | --- |
+| Discover | Is there a real, specific user problem? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
+| Validate | Is the opportunity supported by users, market evidence, and technical reality? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
+| Define | What is the smallest useful product one person can build? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
+| Design | How should the core behavior, states, and visual language work? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
+| Build | How should the App be implemented without losing the MVP boundary? | — | Planned |
+| Test | Is the product reliable, accessible, private, and ready to release? | — | Planned |
+| Ship | Are metadata, screenshots, compliance, TestFlight, and review materials ready? | — | Planned |
+| Learn | What should change after real usage and feedback? | — | Planned |
 
 ## Available skills
 
 | Skill | Purpose | Main deliverables | Status |
 | --- | --- | --- | --- |
 | [`daily-app-concept`](skills/daily-app-concept/) | Find a current mobile product need, narrow it into a solo-developer-friendly App concept, derive an original visual system from product behavior, and create a coherent concept image set. | Research notes, product definition, visual system, manifest, and 5–7 App concept images. | Available |
+
+The machine-readable catalog is [`skills.json`](skills.json). It records lifecycle coverage, discovery keywords, installation paths, deliverables, and availability so an Agent can select a skill without parsing the full README.
 
 ### `daily-app-concept`
 
@@ -110,13 +137,32 @@ Codex can also select an installed skill automatically when the request matches 
 
 Before using a skill, read its `SKILL.md`. Some skills may route to additional files in `references/`, use helpers in `scripts/`, or include reusable materials in `assets/`.
 
+## Agent discovery protocol
+
+When an Agent is asked to find or install a Spark Skill:
+
+1. Read [`skills.json`](skills.json) and match the request against `lifecycle_stages`, `keywords`, and `summary`.
+2. Recommend only skills whose status is `available`. Explain the stage covered, expected deliverables, and important boundaries.
+3. Read the selected `entrypoint` before starting work. Load files in `references/` only when the entrypoint routes to them.
+4. Install the catalog's `install.source` directory under the Agent's skills directory using the skill `name`.
+5. Verify that `SKILL.md` exists and its frontmatter name matches the catalog entry. Do not treat a copied folder as successfully installed until this check passes.
+
+Repository maintainers should run the catalog validator after adding, moving, or renaming a skill:
+
+```bash
+python3 scripts/validate_catalog.py --json
+```
+
 ## Repository structure
 
 ```text
 spark-skills/
 ├── README.md
 ├── README.zh-CN.md
+├── skills.json
 ├── LICENSE
+├── scripts/
+│   └── validate_catalog.py
 └── skills/
     └── daily-app-concept/
         ├── SKILL.md
@@ -137,24 +183,26 @@ Each skill keeps its main instructions in `SKILL.md` and adds supporting resourc
 - `scripts/` contains repeatable or deterministic operations.
 - `assets/` may contain templates or source materials intended for generated output.
 
-## Roadmap
+## How new skills are designed
 
-The target is a practical end-to-end toolkit for independent App development. Planned stages include:
+New skills are added when a workflow has been exercised enough to capture useful judgment and produce a reliable handoff to the next stage. Every addition should have:
 
-- **Discover:** identify narrow problems from user feedback, behavior, and market evidence.
-- **Validate:** compare alternatives, test assumptions, score feasibility, and define success signals.
-- **Define:** write the product promise, user flow, MVP boundary, pricing hypothesis, and technical approach.
-- **Design:** create information architecture, interaction states, visual systems, prototypes, and App Store-ready assets.
-- **Build:** scaffold the project, implement the core loop, handle local data or services, and keep scope controlled.
-- **Test:** verify behavior, accessibility, performance, edge cases, privacy, and release readiness.
-- **Ship:** prepare metadata, screenshots, privacy disclosures, compliance materials, TestFlight, and App Store submission.
-- **Learn:** collect useful feedback and metrics, prioritize iterations, and decide whether to improve, reposition, or stop.
+- A precise name and description that make automatic discovery reliable.
+- A clear lifecycle stage, trigger, scope boundary, input, output, and handoff.
+- A concise `SKILL.md`, with conditional detail moved into `references/`.
+- Scripts only where repeatability or deterministic validation adds real value.
+- Concrete deliverables that can be inspected independently of the conversation.
+- A matching entry in `skills.json` and a passing catalog validation result.
 
-New skills will be added when a workflow has been exercised enough to capture useful judgment and produce a reliable handoff to the next stage.
+Build, test, App Store submission, and post-launch learning remain planned areas. The lifecycle table above is the source of truth for current coverage.
 
 ## Contributing and feedback
 
 Suggestions, real usage reports, and focused improvements are welcome through GitHub Issues. When proposing a new skill, describe the stage of independent development it supports, the decisions it should improve, and what a reviewable result looks like.
+
+## Inspiration
+
+The repository navigation and catalog design were informed by [`alchaincyf/huashu-skills`](https://github.com/alchaincyf/huashu-skills), especially its human-readable routing, machine-readable skill index, and explicit installation protocol. Spark Skills applies those high-level patterns to an original independent-App lifecycle; no Skill text or implementation code from that repository is included here.
 
 ## License
 

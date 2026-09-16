@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "updated": "2026-09-16",
+  "repository": "China-Wesley/spark-skills",
+  "purpose": "Reusable Codex skills for the independent App lifecycle, from demand discovery to App Store release and iteration.",
+  "lifecycle_stages": [
+    {
+      "id": "discover",
+      "name": "Discover",
+      "name_zh": "发现需求",
+      "status": "available"
+    },
+    {
+      "id": "validate",
+      "name": "Validate",
+      "name_zh": "验证机会",
+      "status": "available"
+    },
+    {
+      "id": "define",
+      "name": "Define",
+      "name_zh": "定义产品",
+      "status": "available"
+    },
+    {
+      "id": "design",
+      "name": "Design",
+      "name_zh": "设计体验",
+      "status": "available"
+    },
+    {
+      "id": "build",
+      "name": "Build",
+      "name_zh": "开发实现",
+      "status": "planned"
+    },
+    {
+      "id": "test",
+      "name": "Test",
+      "name_zh": "测试打磨",
+      "status": "planned"
+    },
+    {
+      "id": "ship",
+      "name": "Ship",
+      "name_zh": "App Store 上架",
+      "status": "planned"
+    },
+    {
+      "id": "learn",
+      "name": "Learn",
+      "name_zh": "发布后迭代",
+      "status": "planned"
+    }
+  ],
+  "skills": [
+    {
+      "name": "daily-app-concept",
+      "path": "skills/daily-app-concept",
+      "entrypoint": "skills/daily-app-concept/SKILL.md",
+      "status": "available",
+      "category": "product-discovery",
+      "lifecycle_stages": [
+        "discover",
+        "validate",
+        "define",
+        "design"
+      ],
+      "summary": "Find a current mobile need, validate a narrow opportunity, define a solo-developer-friendly MVP, and express the core experience through an original visual concept.",
+      "summary_zh": "从近期真实反馈中发现移动端需求，验证足够窄的机会，定义适合个人开发者的 MVP，并通过原创视觉概念呈现核心体验。",
+      "keywords": [
+        "app idea",
+        "product discovery",
+        "demand validation",
+        "mvp",
+        "mobile app",
+        "visual concept",
+        "需求发现",
+        "独立开发",
+        "产品验证",
+        "App 概念"
+      ],
+      "deliverables": [
+        "research.md",
+        "concept.md",
+        "visual-system.md",
+        "manifest.json",
+        "5-7 PNG concept images"
+      ],
+      "install": {
+        "type": "subdirectory",
+        "source": "skills/daily-app-concept"
+      }
+    }
+  ]
+}

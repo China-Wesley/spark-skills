@@ -8,6 +8,20 @@ Spark Skills 是一个帮助大家成为独立开发者的 Codex Skills 仓库�
 
 每个 Skill 负责产品生命周期中的一个具体阶段，写清何时触发、依据什么做判断、如何推进、需要交付哪些文件，以及哪些结果可以通过脚本校验。长期目标是形成一套相互衔接的 Skills，让一个人也能从机会发现、产品定义和界面设计，一直走到开发、测试、App Store 审核、发布和后续迭代。
 
+## 30 秒开始
+
+可以直接让 Codex 阅读仓库，并根据你目前所处的阶段选择和安装 Skill：
+
+```text
+阅读 https://github.com/China-Wesley/spark-skills 和其中的 skills.json，根据我当前所处的 App 开发阶段推荐最相关的可用 Skill，说明它会交付什么，然后为 Codex 安装。
+```
+
+如果准备直接开始需求发现和产品定义：
+
+```text
+从 https://github.com/China-Wesley/spark-skills 安装 $daily-app-concept，并用它发现和验证一个移动 App 机会。
+```
+
 ## 这个仓库会收录什么
 
 - **需求发现**：从近期用户反馈、市场信号和现有替代方案中识别值得解决的问题。
@@ -33,13 +47,26 @@ flowchart LR
     G --> H[发布与迭代]
 ```
 
-仓库会沿着这条路径持续补全。已有 Skills 表示现在可以直接使用的能力，后续规划则说明仍在建设的阶段。
+仓库会沿着这条路径持续补全。下方生命周期表明确区分现在可以使用的能力和仍在建设的阶段。
+
+| 阶段 | 核心问题 | Skill | 状态 |
+| --- | --- | --- | --- |
+| 发现需求 | 是否存在真实、具体的用户问题？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
+| 验证机会 | 用户、市场证据和技术现实是否支持这个机会？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
+| 定义产品 | 一个人能够实现的最小有用产品是什么？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
+| 设计体验 | 核心行为、状态和视觉语言应该怎样工作？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
+| 开发实现 | 怎样在不突破 MVP 边界的前提下实现 App？ | — | 规划中 |
+| 测试打磨 | 产品是否可靠、可访问、保护隐私并达到发布标准？ | — | 规划中 |
+| App Store 上架 | 元数据、截图、合规、TestFlight 和审核材料是否齐全？ | — | 规划中 |
+| 发布后迭代 | 真实使用和反馈说明下一步应该改什么？ | — | 规划中 |
 
 ## 已有 Skills
 
 | Skill | 用途 | 主要交付物 | 状态 |
 | --- | --- | --- | --- |
 | [`daily-app-concept`](skills/daily-app-concept/) | 从近期真实反馈中发现一个移动产品需求，将其收窄成适合个人开发者验证的 App 概念，再从产品行为推导原创视觉系统并制作完整示意图。 | 调研记录、产品定义、视觉系统、清单文件和 5–7 张 App 概念图。 | 可用 |
+
+机器可读目录位于 [`skills.json`](skills.json)，其中记录了生命周期阶段、检索关键词、安装路径、交付物和可用状态，让 Agent 无需解析整篇 README 就能准确选择 Skill。
 
 ### `daily-app-concept`
 
@@ -110,13 +137,32 @@ git pull --ff-only
 
 使用前先阅读对应的 `SKILL.md`。部分 Skill 会按需读取 `references/` 中的详细规则，调用 `scripts/` 中的工具，或使用 `assets/` 中的模板与素材。
 
+## Agent 发现与安装协议
+
+当 Agent 需要查找或安装 Spark Skill 时：
+
+1. 读取 [`skills.json`](skills.json)，根据 `lifecycle_stages`、`keywords` 和 `summary` 匹配用户需求。
+2. 只推荐状态为 `available` 的 Skill，并说明覆盖阶段、预期交付物和重要边界。
+3. 开始工作前读取选中 Skill 的 `entrypoint`，只有入口文件明确路由时才加载 `references/`。
+4. 按目录中的 `install.source`，把对应文件夹安装到 Agent 的 Skills 目录，并使用目录中的 `name` 作为安装名。
+5. 验证 `SKILL.md` 确实存在，并确认其 frontmatter 名称与目录记录一致；只复制了文件夹不代表安装成功。
+
+维护者新增、移动或改名 Skill 后应运行目录校验：
+
+```bash
+python3 scripts/validate_catalog.py --json
+```
+
 ## 仓库结构
 
 ```text
 spark-skills/
 ├── README.md
 ├── README.zh-CN.md
+├── skills.json
 ├── LICENSE
+├── scripts/
+│   └── validate_catalog.py
 └── skills/
     └── daily-app-concept/
         ├── SKILL.md
@@ -137,24 +183,26 @@ spark-skills/
 - `scripts/`：可重复运行或需要确定性结果的操作。
 - `assets/`：用于生成结果的模板、图片或其他源文件。
 
-## 后续规划
+## 新 Skill 如何进入仓库
 
-目标是形成一套真正覆盖独立 App 开发全流程的工具箱，计划逐步补全：
+只有当一套流程经过足够实践，能够沉淀出可靠判断并顺利交接给下一阶段时，才会整理成新的 Skill。每个新增 Skill 都应该具备：
 
-- **发现：** 从用户反馈、行为和市场证据中找到足够窄的问题。
-- **验证：** 比较替代方案、验证假设、评估可行性并定义成功信号。
-- **定义：** 写清产品承诺、用户流程、MVP 边界、收费假设和技术方案。
-- **设计：** 完成信息架构、交互状态、视觉系统、原型和上架素材。
-- **开发：** 建立项目、实现核心闭环、处理本地数据或服务端能力，并控制范围。
-- **测试：** 检查功能、可访问性、性能、边界情况、隐私和发布质量。
-- **上架：** 准备元数据、截图、隐私披露、合规材料、TestFlight 和 App Store 提交。
-- **迭代：** 收集有效反馈与指标，决定继续优化、调整定位或停止投入。
+- 精确的名称和描述，让自动发现足够可靠。
+- 清楚的生命周期阶段、触发条件、范围边界、输入、输出和交接关系。
+- 简洁的 `SKILL.md`，把条件性细节放进 `references/`。
+- 只在可重复执行或确定性校验确实有价值时增加脚本。
+- 脱离当前对话也能独立检查的实际交付物。
+- 与 `skills.json` 对应的目录记录，以及通过的仓库校验结果。
 
-只有当一套流程经过足够实践，能够沉淀出可靠判断并顺利交接给下一阶段时，才会整理成新的 Skill。
+开发、测试、App Store 提交和发布后迭代仍是规划中的方向。上方生命周期表是当前能力范围的准确信息源。
 
 ## 反馈与共建
 
 欢迎通过 GitHub Issues 提交建议、真实使用反馈和聚焦的改进。如果希望增加新的 Skill，请尽量说明它服务于独立开发的哪个阶段、需要改善哪些判断，以及怎样的结果才算可检查、可交付。
+
+## 设计参考
+
+本仓库的导航和目录设计参考了 [`alchaincyf/huashu-skills`](https://github.com/alchaincyf/huashu-skills) 在“面向人的需求路由、机器可读 Skill 索引和明确安装协议”上的做法。Spark Skills 只吸收这些高层模式，并将其重新应用于原创的独立 App 生命周期；仓库没有复制对方的 Skill 文案或实现代码。
 
 ## 许可协议
 
