@@ -179,6 +179,8 @@ spark-skills/
         ├── SKILL.md
         ├── agents/
         │   └── openai.yaml       # 可选的 OpenAI 客户端元数据
+        ├── evals/
+        │   └── cases.json        # 触发、边界、失败与证据用例
         ├── references/
         │   ├── deliverables.md
         │   ├── evidence-and-selection.md
@@ -191,6 +193,7 @@ spark-skills/
 每个 Skill 都把主要指令放在 `SKILL.md` 中，只在确实有用时增加辅助资源：
 
 - `agents/`：可选的客户端专属元数据，核心 Skill 不依赖它。
+- `evals/`：覆盖路由、边界、恢复和证据的真实行为用例；它们是评测输入，不单独构成质量证明。
 - `references/`：只在相关任务中加载的详细知识。
 - `scripts/`：可重复运行或需要确定性结果的操作。
 - `assets/`：用于生成结果的模板、图片或其他源文件。
@@ -205,6 +208,7 @@ spark-skills/
 - 简洁的 `SKILL.md`，把条件性细节放进 `references/`。
 - 只在可重复执行或确定性校验确实有价值时增加脚本。
 - 脱离当前对话也能独立检查的实际交付物。
+- 覆盖触发、非触发、失败恢复和禁止行为的机器可读评测用例。
 - 与 `skills.json` 对应的目录记录，以及通过的仓库校验结果。
 
 开发、测试、App Store 提交和发布后迭代仍是规划中的方向。上方生命周期表是当前能力范围的准确信息源。

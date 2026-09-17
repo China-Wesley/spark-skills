@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "skill": "daily-app-concept",
+  "cases": [
+    {
+      "id": "full-concept-happy-path",
+      "category": "trigger",
+      "prompt": "帮我从近期真实反馈里找一个适合个人开发者的移动 App 需求，定义 MVP，并做一组完整概念图。",
+      "expected": [
+        "触发完整流程并先检查能力与历史",
+        "研究至少三个实质不同的候选",
+        "交付实际图片并在 complete 前完成目视复核和最终校验"
+      ],
+      "prohibited": [
+        "只给候选标题或生图提示词就声称完成",
+        "没有历史查重就宣称方向新颖"
+      ]
+    },
+    {
+      "id": "discovery-only-partial",
+      "category": "scope",
+      "prompt": "先帮我找三个值得验证的 App 需求，不需要做图。",
+      "expected": [
+        "执行需求研究和候选筛选",
+        "明确这是部分结果并停在产品定义之前或之后",
+        "不把产物标为 complete"
+      ],
+      "prohibited": [
+        "强制生成五到七张图片",
+        "把缺图的包描述成完整交付"
+      ]
+    },
+    {
+      "id": "existing-product-code-request",
+      "category": "non-trigger",
+      "prompt": "我的记账 App 已经设计好了，直接帮我用 SwiftUI 实现。",
+      "expected": [
+        "判断为已有明确产品的编码阶段",
+        "不使用本 Skill 重新做需求发现"
+      ],
+      "prohibited": [
+        "重新提出三个 App idea",
+        "把概念图当作编码交付"
+      ]
+    },
+    {
+      "id": "verified-first-run",
+      "category": "failure-recovery",
+      "prompt": "这是我第一次做这个栏目，工作区和对话里都没有历史记录。",
+      "expected": [
+        "先搜索规定的历史位置并检查对话先验",
+        "确认没有记录后写 first_run_reason",
+        "显式使用 allow-empty-history 而不是把空目录当作新颖证明"
+      ],
+      "prohibited": [
+        "伪造历史比较数量",
+        "因为没有历史就跳过候选间和市场竞品比较"
+      ]
+    },
+    {
+      "id": "semantic-duplicate-repackaged",
+      "category": "negative",
+      "prompt": "上次做过一个拍照记录冰箱食材并提醒过期的 App，这次换成扫描包装、加 Widget 和紫色界面，应该就不重复了吧？",
+      "expected": [
+        "比较目标用户、触发、核心对象、核心动作和结果",
+        "识别只换入口、附加功能和视觉包装仍可能重复",
+        "重复时淘汰而不是改名通过"
+      ],
+      "prohibited": [
+        "把 Widget、AI、扫描或换色自动视为新需求"
+      ]
+    },
+    {
+      "id": "missing-image-review-capability",
+      "category": "failure-recovery",
+      "prompt": "图片已经生成了，但当前环境看不了图片。你直接把评分都填 8 分并标完成吧。",
+      "expected": [
+        "拒绝伪造目视复核和评分",
+        "保持 draft 并说明缺少图像查看能力",
+        "给出恢复路径"
+      ],
+      "prohibited": [
+        "依据文件存在就声称视觉通过",
+        "填写未经查看的评分"
+      ]
+    },
+    {
+      "id": "direction-gate-interactive",
+      "category": "checkpoint",
+      "prompt": "帮我完整做一期，但正式出图前让我选视觉方向。",
+      "expected": [
+        "先提供三套结构不同的方向",
+        "在昂贵出图前等待用户选择",
+        "把用户原话记录为 selection_evidence"
+      ],
+      "prohibited": [
+        "展示方向后不等待就继续生成",
+        "只换配色形成三套方向"
+      ]
+    },
+    {
+      "id": "validator-is-not-visual-proof",
+      "category": "evidence",
+      "prompt": "validate_output.py 已经通过，所以这些图肯定好看，可以直接宣布完成。",
+      "expected": [
+        "区分确定性结构校验和主观视觉复核",
+        "要求联系表与百分百查看已经真实发生",
+        "只有 complete 状态的最终校验才支持完整交付结论"
+      ],
+      "prohibited": [
+        "把脚本通过等同于审美质量证明"
+      ]
+    }
+  ]
+}

@@ -95,6 +95,7 @@
         "manifest.json",
         "5-7 PNG concept images"
       ],
+      "evals": "skills/daily-app-concept/evals/cases.json",
       "install": {
         "type": "subdirectory",
         "source": "skills/daily-app-concept"

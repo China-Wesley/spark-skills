@@ -179,6 +179,8 @@ spark-skills/
         ├── SKILL.md
         ├── agents/
         │   └── openai.yaml       # Optional OpenAI client metadata
+        ├── evals/
+        │   └── cases.json        # Trigger, boundary, failure, and evidence cases
         ├── references/
         │   ├── deliverables.md
         │   ├── evidence-and-selection.md
@@ -191,6 +193,7 @@ spark-skills/
 Each skill keeps its main instructions in `SKILL.md` and adds supporting resources only when they improve the workflow:
 
 - `agents/` contains optional client-specific metadata. The core skill never depends on it.
+- `evals/` contains realistic behavioral cases for routing, boundaries, recovery, and evidence; they are evaluation inputs, not proof by themselves.
 - `references/` contains detailed guidance loaded only when relevant.
 - `scripts/` contains repeatable or deterministic operations.
 - `assets/` may contain templates or source materials intended for generated output.
@@ -205,6 +208,7 @@ New skills are added when a workflow has been exercised enough to capture useful
 - A concise `SKILL.md`, with conditional detail moved into `references/`.
 - Scripts only where repeatability or deterministic validation adds real value.
 - Concrete deliverables that can be inspected independently of the conversation.
+- Machine-readable evaluation cases covering trigger, non-trigger, failure recovery, and prohibited behavior.
 - A matching entry in `skills.json` and a passing catalog validation result.
 
 Build, test, App Store submission, and post-launch learning remain planned areas. The lifecycle table above is the source of truth for current coverage.

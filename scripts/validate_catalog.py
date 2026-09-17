@@ -144,6 +144,50 @@ def validate(root: Path) -> dict[str, Any]:
             if not isinstance(values, list) or not values or any(not non_empty_string(item) for item in values):
                 errors.append(f"{label}.{field} must be a non-empty string list")
 
+        evals_value = skill.get("evals")
+        if not non_empty_string(evals_value):
+            errors.append(f"{label}.evals must be a repository-relative JSON path")
+        else:
+            evals_path = (root / evals_value).resolve()
+            if root.resolve() not in evals_path.parents or not evals_path.is_file():
+                errors.append(f"{label}.evals is missing or escapes the repository")
+            elif skill_dir not in evals_path.parents:
+                errors.append(f"{label}.evals must be inside the skill directory")
+            else:
+                try:
+                    evals = json.loads(evals_path.read_text(encoding="utf-8"))
+                except json.JSONDecodeError as exc:
+                    errors.append(f"{label}.evals is invalid JSON: {exc}")
+                else:
+                    if evals.get("schema_version") != 1:
+                        errors.append(f"{label}.evals schema_version must be 1")
+                    if evals.get("skill") != name:
+                        errors.append(f"{label}.evals skill must match the catalog name")
+                    cases = evals.get("cases")
+                    case_ids: set[str] = set()
+                    if not isinstance(cases, list) or len(cases) < 4:
+                        errors.append(f"{label}.evals must contain at least 4 cases")
+                    else:
+                        for case_index, case in enumerate(cases):
+                            case_label = f"{label}.evals.cases[{case_index}]"
+                            if not isinstance(case, dict):
+                                errors.append(f"{case_label} must be an object")
+                                continue
+                            for case_field in ("id", "category", "prompt"):
+                                if not non_empty_string(case.get(case_field)):
+                                    errors.append(f"{case_label}.{case_field} must be a non-empty string")
+                            case_id = case.get("id")
+                            if isinstance(case_id, str):
+                                if case_id in case_ids:
+                                    errors.append(f"duplicate eval case id: {case_id}")
+                                case_ids.add(case_id)
+                            for case_field in ("expected", "prohibited"):
+                                values = case.get(case_field)
+                                if not isinstance(values, list) or not values or any(
+                                    not non_empty_string(item) for item in values
+                                ):
+                                    errors.append(f"{case_label}.{case_field} must be a non-empty string list")
+
         install = skill.get("install")
         if not isinstance(install, dict):
             errors.append(f"{label}.install must be an object")
