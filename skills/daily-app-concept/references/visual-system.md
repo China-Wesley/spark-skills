@@ -2,9 +2,80 @@
 
 ## 参考来源
 
-按用途选择作者或官方页：Mobbin、Refero、App Store 与产品官网用于真实流程；Behance、Figma Community、Penpot 用于完整案例；Dribbble、Awwwards、Codrops 用于局部表达；Fonts In Use、Brand New、BP&O 用于字体与品牌；Apple HIG 用于平台规则。
+先研究已经上线的产品怎样完成任务，再看完整案例怎样解释设计，最后才补充局部视觉表达。不要只凭聚合站截图判断真实流程；能访问产品官网、商店页或实际产品时，优先回到一手来源核对。
 
-每项记录标题、作者或所有者、原始链接、访问日期、采用的方法、概念或实物属性与许可判断。公开可见不等于允许复用。无明确许可的素材只提炼通用方法，不进入成品。
+### 真实产品与完整流程
+
+| 来源 | 适合研究 | 使用边界 |
+| --- | --- | --- |
+| [App Store](https://apps.apple.com/) | 已上线 iOS App、定位、截图、版本说明和真实产品边界 | 商店截图和品牌资产默认只用于研究 |
+| [Google Play](https://play.google.com/store/apps) | 已上线 Android App、评价、截图和平台差异 | 同一产品仍应回到官网或实际 App 复核 |
+| [Mobbin](https://mobbin.com/) | 移动端与 Web 的真实页面、组件和连续流程 | 默认只提炼流程与模式，不复制截图或独特表达 |
+| [Refero](https://refero.design/) | Web 与 iOS 产品页面、流程和模式检索 | 聚合内容需回查原产品；默认只作方法参考 |
+| [Screenlane](https://screenlane.com/) | 移动端页面、常见任务和流程序列 | 确认样本版本与当前产品是否一致 |
+| [Page Flows](https://pageflows.com/) | 用户流程、交互视频和页面顺序 | 研究状态变化与节奏，不把录屏或截图当可复用素材 |
+| 产品官网、帮助中心和实际 App | 当前功能、文案、状态、错误处理和收费边界 | 作为真实产品的一手证据，并记录具体页面而非只写首页 |
+
+### 完整案例与设计系统
+
+| 来源 | 适合研究 | 使用边界 |
+| --- | --- | --- |
+| [Behance](https://www.behance.net/) | 作者署名的完整品牌、产品和视觉案例 | 区分已上线项目、概念稿和学生作业；默认方法级参考 |
+| [Figma Community](https://www.figma.com/community) | 可查看结构的 UI Kit、原型、组件和案例文件 | 每个文件许可由作者决定，不能把“可复制”视为“可商用” |
+| [Penpot Libraries & Templates](https://penpot.app/penpothub/libraries-templates) | 开源设计工具中的模板、库和完整文件 | 逐项核验作者、来源和许可，不继承站点本身的开源属性 |
+| [Apple Design Resources](https://developer.apple.com/design/resources/) | Apple 官方 UI Kit、模板、颜色、设备与图标资源 | 官方资源也受各自许可和品牌规则约束，不等于公共领域 |
+| [Material Design 3](https://m3.material.io/) | Android 跨设备组件、布局、状态和设计原则 | 学习系统规则；品牌特征与素材使用另查对应许可 |
+
+### 局部表达、字体与品牌
+
+| 来源 | 适合研究 | 使用边界 |
+| --- | --- | --- |
+| [Dribbble](https://dribbble.com/) | 单屏构图、局部组件、动效片段和表现手法 | 经常缺少完整流程与真实约束，不能单独证明产品可用性 |
+| [Awwwards](https://www.awwwards.com/) | 高表现力网页的节奏、转场、空间和叙事 | Web 表达不直接等于移动端可用性，只提炼可迁移方法 |
+| [Codrops](https://tympanus.net/codrops/) | 前沿交互、动效与可运行的 Web 实验 | 核对文章或代码的单项许可，不直接移植与任务无关的效果 |
+| [Fonts In Use](https://fontsinuse.com/) | 字体在真实品牌和媒介中的使用方式 | 展示案例不授予字体许可；字体授权单独核验 |
+| [Brand New](https://www.underconsideration.com/brandnew/) | 品牌改版、识别系统和前后对比 | 用于理解设计决策，不复制标志或品牌资产 |
+| [BP&O](https://bpando.org/) | 品牌、包装和视觉识别案例 | 默认只作方法与语境研究 |
+
+### 平台规则与可访问性
+
+| 来源 | 适合研究 | 使用边界 |
+| --- | --- | --- |
+| [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) | iOS、iPadOS、watchOS 和 visionOS 的交互、布局与平台惯例 | Apple 平台优先采用；与实际目标设备版本一并记录 |
+| [Material Design 3](https://m3.material.io/) | Android 与跨平台界面的组件、颜色、排版和状态 | 不用 Material 外观替代产品自身的行为表达 |
+| [WCAG](https://www.w3.org/WAI/standards-guidelines/wcag/) | 对比度、文字、输入、动效和可感知性要求 | 按交付媒介和目标等级记录实际检查项，不只写“符合 WCAG” |
+
+### 可进入成品的素材候选
+
+这些入口只缩短寻找素材和核验许可的路径，不自动批准任何单项素材。真正使用前保存素材页、作者、许可页和访问日期。
+
+| 来源 | 素材与许可入口 | 使用判断 |
+| --- | --- | --- |
+| [Openverse](https://openverse.org/) | 聚合带 Creative Commons 或公共领域标记的图片与音频 | 回到原站核对单项许可、署名、改编和商业使用条件 |
+| [Unsplash License](https://unsplash.com/license) | Unsplash 图片及当前许可说明 | 遵守禁止原样转售、批量复制等限制；建议保留作者署名 |
+| [Pexels License](https://www.pexels.com/license/) | Pexels 图片、视频及当前许可说明 | 核对禁止事项，人物、商标和场所权利另行判断 |
+| [Google Fonts Licensing](https://fonts.google.com/knowledge/glossary/licensing) | Google Fonts 字体的许可说明 | 记录具体字体、版本和许可证，不从视觉案例反推授权 |
+| [Lucide License](https://lucide.dev/license) | Lucide 图标和许可说明 | 保留许可证要求；按项目需要修改，避免冒充第三方品牌图标 |
+| [SF Symbols](https://developer.apple.com/sf-symbols/) | Apple 平台系统符号和工具 | 仅按 Apple 的许可与平台限制使用，品牌符号尤其要单独检查 |
+
+### 单项来源记录
+
+每个实际采用的参考都写入当期 `visual-system.md`，不能只记录上面的入口站。至少使用以下字段：
+
+```yaml
+- title: 具体页面、流程、案例或素材名称
+  owner: 作者、设计团队、产品或平台
+  source_url: 指向该项目或页面的原始链接
+  accessed_at: YYYY-MM-DD
+  source_type: shipped-product | case-study | design-system | asset
+  artifact_status: shipped | concept | template | unknown
+  adopted_method: 采用的层级、流程、状态、排版、色彩、组件或动效方法
+  license_url: 明确许可页；没有则写 null
+  usage_decision: method-only | direct-use
+  decision_reason: 为什么允许或不允许进入成品
+```
+
+`source_url` 必须落到实际采用项，不能只填平台首页。公开可见、可下载、可复制或由官方提供，都不自动等于允许进入成品。没有明确且兼容许可时，`usage_decision` 必须是 `method-only`；只提炼通用方法，不复制原图、独特构图、品牌资产、文案或可识别视觉组合。
 
 ## 三方向门槛
 
