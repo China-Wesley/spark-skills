@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a daily-app-concept output directory using only the Python stdlib."""
+"""Validate a daily-app-concept v2 output using only the Python stdlib."""
 
 from __future__ import annotations
 
@@ -12,91 +12,188 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
-REQUIRED_DOCS = ("research.md", "concept.md", "visual-system.md", "manifest.json")
-REQUIRED_ROLES = {"problem", "solution", "core-screen", "state-change", "outcome"}
-CONCEPT_TEXT_FIELDS = (
-    "name",
-    "one_sentence",
-    "target_user",
-    "trigger",
-    "core_action",
-    "result",
-    "core_screen",
-    "monetization_hypothesis",
+DOCS = ("research.md", "concept.md", "visual-system.md", "manifest.json")
+ROLES = {"problem", "solution", "core-screen", "state-change", "outcome"}
+CONCEPT_FIELDS = (
+    "name", "one_sentence", "novelty_key", "target_user", "trigger",
+    "core_action", "result", "core_screen", "monetization_hypothesis",
     "competition_risk",
+)
+SCORE_FIELDS = (
+    "product_specificity", "information_hierarchy", "core_ui_believability",
+    "sequence_variety", "readability", "craft",
 )
 
 
-def add_missing_text(container: dict[str, Any], fields: tuple[str, ...], prefix: str, errors: list[str]) -> None:
+def text_fields(obj: dict[str, Any], fields: tuple[str, ...], label: str, errors: list[str]) -> None:
     for field in fields:
-        value = container.get(field)
-        if not isinstance(value, str) or not value.strip():
-            errors.append(f"{prefix}.{field} must be a non-empty string")
+        if not isinstance(obj.get(field), str) or not obj[field].strip():
+            errors.append(f"{label}.{field} must be a non-empty string")
 
 
-def png_dimensions(path: Path) -> tuple[int, int]:
+def png_size(path: Path) -> tuple[int, int]:
     with path.open("rb") as handle:
         header = handle.read(24)
     if len(header) != 24 or header[:8] != b"\x89PNG\r\n\x1a\n" or header[12:16] != b"IHDR":
         raise ValueError("invalid PNG signature or IHDR")
-    width, height = struct.unpack(">II", header[16:24])
-    if width <= 0 or height <= 0:
-        raise ValueError("invalid PNG dimensions")
-    return width, height
+    return struct.unpack(">II", header[16:24])
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
+def digest(path: Path) -> str:
+    value = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+            value.update(chunk)
+    return value.hexdigest()
 
 
-def validate_source(item: Any, label: str, errors: list[str], require_scope: bool = False) -> None:
+def source(item: Any, label: str, errors: list[str], scope: bool = False) -> None:
     if not isinstance(item, dict):
         errors.append(f"{label} must be an object")
         return
-    required = ["url", "accessed", "summary"]
-    if require_scope:
-        required.append("scope")
-    for field in required:
-        value = item.get(field)
-        if not isinstance(value, str) or not value.strip():
-            errors.append(f"{label}.{field} must be a non-empty string")
-    url = item.get("url")
-    if isinstance(url, str) and url and not re.match(r"^https?://", url):
+    fields = ("url", "accessed", "summary", "scope") if scope else ("url", "accessed", "summary")
+    text_fields(item, fields, label, errors)
+    if isinstance(item.get("url"), str) and not re.match(r"^https?://", item["url"]):
         errors.append(f"{label}.url must start with http:// or https://")
 
 
-def validate(output_dir: Path) -> dict[str, Any]:
-    root = output_dir.resolve()
-    errors: list[str] = []
-    warnings: list[str] = []
+def list_of_text(obj: dict[str, Any], field: str, minimum: int, label: str, errors: list[str]) -> list[Any]:
+    value = obj.get(field)
+    if not isinstance(value, list) or len(value) < minimum or any(not isinstance(x, str) or not x.strip() for x in value):
+        errors.append(f"{label}.{field} must contain at least {minimum} non-empty items")
+        return []
+    return value
 
+
+def validate_novelty(manifest: dict[str, Any], errors: list[str]) -> dict[str, Any]:
+    review = manifest.get("novelty_review")
+    if not isinstance(review, dict):
+        errors.append("novelty_review must be an object")
+        return {}
+    list_of_text(review, "history_sources", 1, "novelty_review", errors)
+    count = review.get("history_items_reviewed")
+    if not isinstance(count, int) or isinstance(count, bool) or count < 1:
+        errors.append("novelty_review.history_items_reviewed must be at least 1")
+        count = 0
+    if review.get("conversation_prior_ideas_checked") is not True:
+        errors.append("novelty_review.conversation_prior_ideas_checked must be true")
+    if review.get("rejected_concepts_reserved") is not True:
+        errors.append("novelty_review.rejected_concepts_reserved must be true")
+    if not isinstance(review.get("candidate_count"), int) or review["candidate_count"] < 3:
+        errors.append("novelty_review.candidate_count must be at least 3")
+    nearest = review.get("nearest_matches")
+    minimum = min(3, count) if count else 1
+    if not isinstance(nearest, list) or len(nearest) < minimum:
+        errors.append(f"novelty_review.nearest_matches must contain at least {minimum} comparisons")
+    else:
+        for index, item in enumerate(nearest):
+            if not isinstance(item, dict):
+                errors.append(f"novelty_review.nearest_matches[{index}] must be an object")
+                continue
+            text_fields(item, ("name", "overlap", "decision"), f"novelty_review.nearest_matches[{index}]", errors)
+            if item.get("decision") not in {"different", "reject"}:
+                errors.append(f"novelty_review.nearest_matches[{index}].decision must be different or reject")
+    automated = review.get("automated_check")
+    if not isinstance(automated, dict):
+        errors.append("novelty_review.automated_check must be an object")
+    else:
+        comparisons = automated.get("comparison_count")
+        similarity = automated.get("max_similarity")
+        if not isinstance(comparisons, int) or isinstance(comparisons, bool) or comparisons < 1:
+            errors.append("novelty_review.automated_check.comparison_count must be at least 1")
+        if not isinstance(similarity, (int, float)) or isinstance(similarity, bool) or not 0 <= similarity <= 1:
+            errors.append("novelty_review.automated_check.max_similarity must be between 0 and 1")
+        if automated.get("decision") != "pass":
+            errors.append("novelty_review.automated_check.decision must be pass")
+    text_fields(review, ("selected_reason",), "novelty_review", errors)
+    if review.get("decision") != "pass":
+        errors.append("novelty_review.decision must be pass")
+    return review
+
+
+def validate_visual(visual: dict[str, Any], errors: list[str]) -> dict[str, Any]:
+    refs = visual.get("references")
+    if not isinstance(refs, list) or len(refs) < 3:
+        errors.append("visual.references must contain at least 3 design references")
+    else:
+        for index, item in enumerate(refs):
+            label = f"visual.references[{index}]"
+            source(item, label, errors)
+            if isinstance(item, dict):
+                text_fields(item, ("owner", "method_taken", "license_judgment"), label, errors)
+    review = visual.get("quality_review")
+    if not isinstance(review, dict):
+        errors.append("visual.quality_review must be an object")
+        return {}
+    directions = review.get("directions_explored")
+    names: set[str] = set()
+    if not isinstance(directions, list) or len(directions) < 3:
+        errors.append("visual.quality_review.directions_explored must contain at least 3 directions")
+    else:
+        for index, item in enumerate(directions):
+            if not isinstance(item, dict):
+                errors.append(f"visual.quality_review.directions_explored[{index}] must be an object")
+                continue
+            text_fields(
+                item, ("name", "composition", "product_metaphor", "why_not_template"),
+                f"visual.quality_review.directions_explored[{index}]", errors,
+            )
+            if isinstance(item.get("name"), str):
+                names.add(item["name"])
+    selected = review.get("selected_direction")
+    if not isinstance(selected, str) or not selected.strip():
+        errors.append("visual.quality_review.selected_direction must be a non-empty string")
+    elif names and selected not in names:
+        errors.append("visual.quality_review.selected_direction must match an explored direction")
+    recent = review.get("recent_sets_compared")
+    if not isinstance(recent, int) or isinstance(recent, bool) or recent < 0:
+        errors.append("visual.quality_review.recent_sets_compared must be a non-negative integer")
+    elif recent == 0 and (not isinstance(review.get("first_run_reason"), str) or not review["first_run_reason"].strip()):
+        errors.append("visual.quality_review.first_run_reason is required when no recent sets exist")
+    fingerprint = review.get("template_fingerprint")
+    if not isinstance(fingerprint, dict):
+        errors.append("visual.quality_review.template_fingerprint must be an object")
+    else:
+        text_fields(
+            fingerprint, ("layout", "hero_structure", "palette", "type_treatment", "device_treatment"),
+            "visual.quality_review.template_fingerprint", errors,
+        )
+    for field in ("contact_sheet_reviewed", "full_size_reviewed", "core_ui_reviewed"):
+        if review.get(field) is not True:
+            errors.append(f"visual.quality_review.{field} must be true")
+    scores = review.get("scores")
+    if not isinstance(scores, dict):
+        errors.append("visual.quality_review.scores must be an object")
+    else:
+        for field in SCORE_FIELDS:
+            score = scores.get(field)
+            if not isinstance(score, (int, float)) or isinstance(score, bool) or not 8 <= score <= 10:
+                errors.append(f"visual.quality_review.scores.{field} must be between 8 and 10")
+    if review.get("blocking_issues") != []:
+        errors.append("visual.quality_review.blocking_issues must be an empty list")
+    if review.get("decision") != "pass":
+        errors.append("visual.quality_review.decision must be pass")
+    return review
+
+
+def validate(output_dir: Path) -> dict[str, Any]:
+    root, errors, warnings = output_dir.resolve(), [], []
     if not root.is_dir():
         return {"ok": False, "output_dir": str(root), "errors": ["output directory does not exist"], "warnings": []}
-
-    for name in REQUIRED_DOCS:
+    for name in DOCS:
         path = root / name
-        if not path.is_file():
-            errors.append(f"missing required file: {name}")
-        elif path.stat().st_size == 0:
-            errors.append(f"required file is empty: {name}")
-
+        if not path.is_file() or path.stat().st_size == 0:
+            errors.append(f"missing or empty required file: {name}")
     manifest_path = root / "manifest.json"
     if not manifest_path.is_file():
         return {"ok": False, "output_dir": str(root), "errors": errors, "warnings": warnings}
-
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        errors.append(f"manifest.json is unreadable: {exc}")
-        return {"ok": False, "output_dir": str(root), "errors": errors, "warnings": warnings}
+        return {"ok": False, "output_dir": str(root), "errors": errors + [f"manifest.json is unreadable: {exc}"], "warnings": warnings}
 
-    if manifest.get("schema_version") != 1:
-        errors.append("schema_version must be 1")
+    if manifest.get("schema_version") != 2:
+        errors.append("schema_version must be 2")
     date = manifest.get("date")
     if not isinstance(date, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
         errors.append("date must use YYYY-MM-DD")
@@ -106,157 +203,133 @@ def validate(output_dir: Path) -> dict[str, Any]:
     elif status == "draft":
         warnings.append("status is draft; change to complete only after final review")
 
-    concept = manifest.get("concept")
-    if not isinstance(concept, dict):
+    concept = manifest.get("concept") if isinstance(manifest.get("concept"), dict) else {}
+    if not concept:
         errors.append("concept must be an object")
-        concept = {}
-    add_missing_text(concept, CONCEPT_TEXT_FIELDS, "concept", errors)
-    flow = concept.get("flow")
-    if not isinstance(flow, list) or not 3 <= len(flow) <= 5 or any(not isinstance(x, str) or not x.strip() for x in flow):
-        errors.append("concept.flow must contain 3 to 5 non-empty steps")
-    mvp = concept.get("mvp")
-    if not isinstance(mvp, list) or len(mvp) < 2 or any(not isinstance(x, str) or not x.strip() for x in mvp):
-        errors.append("concept.mvp must contain at least 2 non-empty items")
-    exclusions = concept.get("exclusions")
-    if not isinstance(exclusions, list) or len(exclusions) < 2 or any(not isinstance(x, str) or not x.strip() for x in exclusions):
-        errors.append("concept.exclusions must contain at least 2 non-empty items")
+    text_fields(concept, CONCEPT_FIELDS, "concept", errors)
+    flow = list_of_text(concept, "flow", 3, "concept", errors)
+    if len(flow) > 5:
+        errors.append("concept.flow must contain no more than 5 steps")
+    list_of_text(concept, "mvp", 2, "concept", errors)
+    list_of_text(concept, "exclusions", 2, "concept", errors)
 
-    evidence = manifest.get("evidence")
-    if not isinstance(evidence, dict):
-        errors.append("evidence must be an object")
-        evidence = {}
+    evidence = manifest.get("evidence") if isinstance(manifest.get("evidence"), dict) else {}
     direct = evidence.get("direct_user_feedback")
     if not isinstance(direct, list) or len(direct) < 2:
         errors.append("evidence.direct_user_feedback must contain at least 2 sources")
-    else:
-        for index, item in enumerate(direct):
-            validate_source(item, f"evidence.direct_user_feedback[{index}]", errors, require_scope=True)
-            if isinstance(item, dict) and (not isinstance(item.get("published"), str) or not item.get("published", "").strip()):
-                errors.append(f"evidence.direct_user_feedback[{index}].published must be a non-empty string")
+        direct = []
+    for index, item in enumerate(direct):
+        source(item, f"evidence.direct_user_feedback[{index}]", errors, True)
+        if isinstance(item, dict):
+            text_fields(item, ("published",), f"evidence.direct_user_feedback[{index}]", errors)
     market = evidence.get("market_proof")
-    if not isinstance(market, list) or len(market) < 1:
+    if not isinstance(market, list) or not market:
         errors.append("evidence.market_proof must contain at least 1 source")
-    else:
-        for index, item in enumerate(market):
-            validate_source(item, f"evidence.market_proof[{index}]", errors, require_scope=True)
+        market = []
+    for index, item in enumerate(market):
+        source(item, f"evidence.market_proof[{index}]", errors, True)
     official = evidence.get("official_sources")
-    if not isinstance(official, list) or len(official) < 1:
+    if not isinstance(official, list) or not official:
         errors.append("evidence.official_sources must contain at least 1 source")
-    else:
-        for index, item in enumerate(official):
-            validate_source(item, f"evidence.official_sources[{index}]", errors)
-    inferences = evidence.get("inferences")
-    if not isinstance(inferences, list) or len(inferences) < 1 or any(not isinstance(x, str) or not x.strip() for x in inferences):
-        errors.append("evidence.inferences must contain at least 1 explicit inference")
+        official = []
+    for index, item in enumerate(official):
+        source(item, f"evidence.official_sources[{index}]", errors)
+    list_of_text(evidence, "inferences", 1, "evidence", errors)
 
-    visual = manifest.get("visual")
-    if not isinstance(visual, dict):
-        errors.append("visual must be an object")
-        visual = {}
-    add_missing_text(visual, ("style_summary",), "visual", errors)
+    novelty = validate_novelty(manifest, errors)
+    visual = manifest.get("visual") if isinstance(manifest.get("visual"), dict) else {}
+    text_fields(visual, ("style_summary",), "visual", errors)
     mappings = visual.get("mappings")
     if not isinstance(mappings, list) or len(mappings) < 3:
         errors.append("visual.mappings must contain at least 3 mappings")
-    else:
-        for index, mapping in enumerate(mappings):
-            if not isinstance(mapping, dict):
-                errors.append(f"visual.mappings[{index}] must be an object")
-                continue
-            add_missing_text(
-                mapping,
-                ("source_clue", "design_primitive", "component", "purpose"),
-                f"visual.mappings[{index}]",
-                errors,
-            )
+        mappings = []
+    for index, item in enumerate(mappings):
+        if isinstance(item, dict):
+            text_fields(item, ("source_clue", "design_primitive", "component", "purpose"), f"visual.mappings[{index}]", errors)
+        else:
+            errors.append(f"visual.mappings[{index}] must be an object")
     assets_used = visual.get("third_party_assets_used")
-    third_party_assets = visual.get("third_party_assets")
-    if assets_used is not False and assets_used is not True:
+    assets = visual.get("third_party_assets")
+    if assets_used not in {True, False}:
         errors.append("visual.third_party_assets_used must be true or false")
     elif assets_used is True:
-        if not isinstance(third_party_assets, list) or not third_party_assets:
+        if not isinstance(assets, list) or not assets:
             errors.append("third-party assets require source_url, license and usage records")
         else:
-            for index, item in enumerate(third_party_assets):
-                if not isinstance(item, dict):
+            for index, item in enumerate(assets):
+                if isinstance(item, dict):
+                    text_fields(item, ("source_url", "license", "usage"), f"visual.third_party_assets[{index}]", errors)
+                else:
                     errors.append(f"visual.third_party_assets[{index}] must be an object")
-                    continue
-                add_missing_text(item, ("source_url", "license", "usage"), f"visual.third_party_assets[{index}]", errors)
-    elif third_party_assets not in (None, []):
+    elif assets not in (None, []):
         warnings.append("third_party_assets_used is false but third_party_assets is not empty")
+    visual_review = validate_visual(visual, errors)
 
-    image_entries = manifest.get("images")
-    dimensions: list[tuple[int, int]] = []
-    hashes: list[str] = []
-    roles: set[str] = set()
-    listed_files: list[str] = []
-    if not isinstance(image_entries, list) or not 5 <= len(image_entries) <= 7:
+    entries = manifest.get("images")
+    if not isinstance(entries, list) or not 5 <= len(entries) <= 7:
         errors.append("images must contain 5 to 7 entries")
-        image_entries = []
-    for index, entry in enumerate(image_entries):
-        if not isinstance(entry, dict):
+        entries = []
+    dimensions, hashes, roles, listed, story, ui_count = [], [], set(), [], set(), 0
+    for index, item in enumerate(entries):
+        if not isinstance(item, dict):
             errors.append(f"images[{index}] must be an object")
             continue
-        filename = entry.get("file")
-        role = entry.get("role")
+        filename, role = item.get("file"), item.get("role")
         if not isinstance(filename, str) or not filename.strip():
             errors.append(f"images[{index}].file must be a non-empty string")
             continue
-        if not isinstance(role, str) or not role.strip():
-            errors.append(f"images[{index}].role must be a non-empty string")
-        else:
+        if isinstance(role, str) and role.strip():
             roles.add(role)
-        if filename in listed_files:
-            errors.append(f"duplicate image path in manifest: {filename}")
-        listed_files.append(filename)
+        else:
+            errors.append(f"images[{index}].role must be a non-empty string")
+        communicates = item.get("communicates")
+        if not isinstance(communicates, list) or not communicates:
+            errors.append(f"images[{index}].communicates must contain labels")
+        elif index < 2:
+            story.update(x for x in communicates if isinstance(x, str))
+        if item.get("shows_product_ui") is True:
+            ui_count += 1
+        elif item.get("shows_product_ui") is not False:
+            errors.append(f"images[{index}].shows_product_ui must be true or false")
+        if filename in listed:
+            errors.append(f"duplicate image path: {filename}")
+        listed.append(filename)
         path = (root / filename).resolve()
-        if path != root and root not in path.parents:
-            errors.append(f"image path escapes output directory: {filename}")
-            continue
-        if path.suffix.lower() != ".png":
-            errors.append(f"image must be PNG: {filename}")
-        if not path.is_file():
-            errors.append(f"missing image: {filename}")
+        if root not in path.parents or path.suffix.lower() != ".png" or not path.is_file():
+            errors.append(f"invalid or missing PNG: {filename}")
             continue
         try:
-            actual = png_dimensions(path)
+            actual = png_size(path)
             dimensions.append(actual)
-            hashes.append(sha256(path))
+            hashes.append(digest(path))
+            if (item.get("width"), item.get("height")) != actual:
+                errors.append(f"dimension mismatch for {filename}: declared={(item.get('width'), item.get('height'))}, actual={actual}")
         except (OSError, ValueError) as exc:
             errors.append(f"unreadable PNG {filename}: {exc}")
-            continue
-        declared = (entry.get("width"), entry.get("height"))
-        if declared != actual:
-            errors.append(f"dimension mismatch for {filename}: declared={declared}, actual={actual}")
-
-    missing_roles = sorted(REQUIRED_ROLES - roles)
-    if missing_roles:
-        errors.append(f"missing required image roles: {missing_roles}")
+    missing = sorted(ROLES - roles)
+    if missing:
+        errors.append(f"missing required image roles: {missing}")
+    if not {"problem", "action", "result"}.issubset(story):
+        errors.append("first two images must communicate problem, action and result")
+    if ui_count < 3:
+        errors.append("at least 3 images must set shows_product_ui=true")
     if dimensions and len(set(dimensions)) != 1:
         errors.append(f"image dimensions are inconsistent: {sorted(set(dimensions))}")
-    if hashes and len(hashes) != len(set(hashes)):
+    if len(hashes) != len(set(hashes)):
         errors.append("image hashes are not unique")
+    actual = sorted(str(path.relative_to(root)) for path in (root / "images").glob("*.png")) if (root / "images").is_dir() else []
+    if sorted(listed) != actual:
+        errors.append(f"manifest image list does not match images directory: manifest={sorted(listed)} actual={actual}")
 
-    images_dir = root / "images"
-    actual_image_files = sorted(str(path.relative_to(root)) for path in images_dir.glob("*.png")) if images_dir.is_dir() else []
-    if sorted(listed_files) != actual_image_files:
-        errors.append(f"manifest image list does not match images directory: manifest={sorted(listed_files)} actual={actual_image_files}")
-
+    scores = visual_review.get("scores") if isinstance(visual_review.get("scores"), dict) else {}
     return {
-        "ok": not errors,
-        "output_dir": str(root),
-        "date": date,
-        "status": status,
-        "concept_name": concept.get("name"),
-        "image_count": len(image_entries),
+        "ok": not errors, "output_dir": str(root), "date": date, "status": status,
+        "concept_name": concept.get("name"), "image_count": len(entries),
         "dimensions": list(dimensions[0]) if dimensions and len(set(dimensions)) == 1 else None,
-        "unique_hashes": len(set(hashes)),
-        "roles": sorted(roles),
-        "direct_feedback_count": len(direct) if isinstance(direct, list) else 0,
-        "market_proof_count": len(market) if isinstance(market, list) else 0,
-        "official_source_count": len(official) if isinstance(official, list) else 0,
-        "visual_mapping_count": len(mappings) if isinstance(mappings, list) else 0,
-        "errors": errors,
-        "warnings": warnings,
+        "unique_hashes": len(set(hashes)), "roles": sorted(roles), "ui_image_count": ui_count,
+        "history_items_reviewed": novelty.get("history_items_reviewed"),
+        "visual_score_min": min(scores.values()) if scores else None,
+        "errors": errors, "warnings": warnings,
     }
 
 
@@ -265,16 +338,14 @@ def main() -> int:
     parser.add_argument("output_dir", type=Path)
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
-
     result = validate(args.output_dir)
     if args.as_json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        state = "PASS" if result["ok"] else "FAIL"
-        print(f"{state}: {result['output_dir']}")
-        for warning in result.get("warnings", []):
+        print(f"{'PASS' if result['ok'] else 'FAIL'}: {result['output_dir']}")
+        for warning in result["warnings"]:
             print(f"warning: {warning}")
-        for error in result.get("errors", []):
+        for error in result["errors"]:
             print(f"error: {error}")
     return 0 if result["ok"] else 1
 

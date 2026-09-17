@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-09-16",
+  "updated": "2026-09-17",
   "repository": "China-Wesley/spark-skills",
   "format": {
     "name": "Agent Skills",
@@ -72,8 +72,8 @@
         "define",
         "design"
       ],
-      "summary": "Find a current mobile need, validate a narrow opportunity, define a solo-developer-friendly MVP, and express the core experience through an original visual concept.",
-      "summary_zh": "从近期真实反馈中发现移动端需求，验证足够窄的机会，定义适合个人开发者的 MVP，并通过原创视觉概念呈现核心体验。",
+      "summary": "Find a current mobile need, reject semantic repeats across full history, define a solo-developer-friendly MVP, and deliver an original visual concept that passes structured visual review.",
+      "summary_zh": "从近期真实反馈中发现移动端需求，跨完整历史排除语义重复，定义适合个人开发者的 MVP，并交付通过结构化视觉复核的原创概念。",
       "keywords": [
         "app idea",
         "product discovery",
@@ -81,6 +81,8 @@
         "mvp",
         "mobile app",
         "visual concept",
+        "semantic deduplication",
+        "visual quality review",
         "需求发现",
         "独立开发",
         "产品验证",

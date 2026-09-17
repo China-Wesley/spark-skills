@@ -184,6 +184,7 @@ spark-skills/
         │   ├── evidence-and-selection.md
         │   └── visual-system.md
         └── scripts/
+            ├── check_novelty.py
             └── validate_output.py
 ```
 
