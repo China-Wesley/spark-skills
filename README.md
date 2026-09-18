@@ -24,6 +24,12 @@ To start directly with demand discovery and product definition:
 Install the daily-app-concept skill from https://github.com/China-Wesley/spark-skills and use it to find and validate one mobile App opportunity.
 ```
 
+If you already have a product direction and need a clickable prototype:
+
+```text
+Install the interactive-prototype skill from https://github.com/China-Wesley/spark-skills and turn my product idea into a high-fidelity prototype that I can open and verify in a desktop browser.
+```
+
 ## What belongs here
 
 - **Demand discovery** based on current user feedback, market signals, and existing alternatives.
@@ -56,7 +62,7 @@ The repository will grow along this path. The lifecycle table below separates wh
 | Discover | Is there a real, specific user problem? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
 | Validate | Is the opportunity supported by users, market evidence, and technical reality? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
 | Define | What is the smallest useful product one person can build? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
-| Design | How should the core behavior, states, and visual language work? | [`daily-app-concept`](skills/daily-app-concept/) | Available |
+| Design | How should the core behavior, states, and visual language work? | [`interactive-prototype`](skills/interactive-prototype/) | Available |
 | Build | How should the App be implemented without losing the MVP boundary? | — | Planned |
 | Test | Is the product reliable, accessible, private, and ready to release? | — | Planned |
 | Ship | Are metadata, screenshots, compliance, TestFlight, and review materials ready? | — | Planned |
@@ -67,6 +73,7 @@ The repository will grow along this path. The lifecycle table below separates wh
 | Skill | Purpose | Main deliverables | Status |
 | --- | --- | --- | --- |
 | [`daily-app-concept`](skills/daily-app-concept/) | Find a current mobile product need, narrow it into a solo-developer-friendly App concept, derive an original visual system from product behavior, and create a coherent concept image set. | Research notes, product definition, visual system, manifest, and 5–7 App concept images. | Available |
+| [`interactive-prototype`](skills/interactive-prototype/) | Turn a defined product direction into a user journey, product states, and a high-fidelity mobile or desktop prototype that can be operated in a desktop browser. | Browser preview, interactive product, product brief, executable primary journey, validation report, and screenshots. | Available |
 
 The machine-readable catalog is [`skills.json`](skills.json). It records lifecycle coverage, discovery keywords, installation paths, deliverables, and availability so an Agent can select a skill without parsing the full README.
 
@@ -92,6 +99,23 @@ flowchart LR
 ```
 
 Read the full instructions in [`skills/daily-app-concept/SKILL.md`](skills/daily-app-concept/SKILL.md).
+
+### `interactive-prototype`
+
+This skill connects product definition to implementation. It turns the idea into one high-value user journey, derives screens and states from that journey, and produces a browser-delivered prototype. Mobile work appears inside a scalable phone window on desktop; desktop work appears inside a browser window, with a direct link to the raw prototype.
+
+Static screens are not treated as an interactive prototype, and simulated login, payment, AI, or persistence are not described as production integrations. Complete delivery requires structural validation and evidence from a real browser walkthrough.
+
+```mermaid
+flowchart LR
+    A[Product idea] --> B[Product contract]
+    B --> C[Journey and states]
+    C --> D[High-fidelity browser prototype]
+    D --> E[Browser journey verification]
+    E --> F[Implementation handoff]
+```
+
+Read the full instructions in [`skills/interactive-prototype/SKILL.md`](skills/interactive-prototype/SKILL.md).
 
 ## Working principles
 
@@ -120,6 +144,7 @@ The Agent Skills format defines the package, while each Agent decides where it d
 SPARK_AGENT_SKILLS_DIR="/absolute/path/to/your-agent/skills"
 mkdir -p "$SPARK_AGENT_SKILLS_DIR"
 ln -s "$(pwd)/skills/daily-app-concept" "$SPARK_AGENT_SKILLS_DIR/daily-app-concept"
+ln -s "$(pwd)/skills/interactive-prototype" "$SPARK_AGENT_SKILLS_DIR/interactive-prototype"
 ```
 
 If your Agent supports installation from a Git repository and subdirectory, use the `install.source` value in [`skills.json`](skills.json). The portable unit is the individual skill directory, not the whole repository.
@@ -136,6 +161,8 @@ Invocation syntax varies by Agent. Name the skill directly in your request, or l
 
 ```text
 Use the daily-app-concept skill to research one current mobile need and produce a complete App concept with actual images.
+
+Use the interactive-prototype skill to turn this product idea into a high-fidelity browser prototype and verify its primary journey.
 ```
 
 Before using a skill, read its `SKILL.md`. Some skills may route to additional files in `references/`, use helpers in `scripts/`, or include reusable materials in `assets/`.
@@ -175,19 +202,27 @@ spark-skills/
 ├── scripts/
 │   └── validate_catalog.py
 └── skills/
-    └── daily-app-concept/
+    ├── daily-app-concept/
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   │   └── openai.yaml       # Optional OpenAI client metadata
+    │   ├── evals/
+    │   │   └── cases.json        # Trigger, boundary, failure, and evidence cases
+    │   ├── references/
+    │   │   ├── deliverables.md
+    │   │   ├── evidence-and-selection.md
+    │   │   └── visual-system.md
+    │   └── scripts/
+    │       ├── check_novelty.py
+    │       └── validate_output.py
+    └── interactive-prototype/
         ├── SKILL.md
+        ├── THIRD_PARTY_NOTICES.md
         ├── agents/
-        │   └── openai.yaml       # Optional OpenAI client metadata
+        ├── assets/
         ├── evals/
-        │   └── cases.json        # Trigger, boundary, failure, and evidence cases
         ├── references/
-        │   ├── deliverables.md
-        │   ├── evidence-and-selection.md
-        │   └── visual-system.md
         └── scripts/
-            ├── check_novelty.py
-            └── validate_output.py
 ```
 
 Each skill keeps its main instructions in `SKILL.md` and adds supporting resources only when they improve the workflow:
@@ -219,7 +254,7 @@ Suggestions, real usage reports, and focused improvements are welcome through Gi
 
 ## Inspiration
 
-The repository navigation and catalog design were informed by [`alchaincyf/huashu-skills`](https://github.com/alchaincyf/huashu-skills), especially its human-readable routing, machine-readable skill index, and explicit installation protocol. Spark Skills applies those high-level patterns to an original independent-App lifecycle; no Skill text or implementation code from that repository is included here.
+The repository navigation and catalog design were informed by [`alchaincyf/huashu-skills`](https://github.com/alchaincyf/huashu-skills), especially its human-readable routing, machine-readable skill index, and explicit installation protocol. `interactive-prototype` separately adapts the HTML-prototype and browser-verification methods from the MIT-licensed [`alchaincyf/huashu-design`](https://github.com/alchaincyf/huashu-design). Its source boundary and retained license notice are documented in [`THIRD_PARTY_NOTICES.md`](skills/interactive-prototype/THIRD_PARTY_NOTICES.md).
 
 ## License
 

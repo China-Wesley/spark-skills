@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "skill": "interactive-prototype",
+  "cases": [
+    {
+      "id": "mobile-idea-to-browser-prototype",
+      "category": "trigger",
+      "prompt": "我想做一个帮人快速清理相册的手机 App，帮我直接做成在电脑浏览器里能点的高保真原型。",
+      "expected": [
+        "将想法收窄成一个目标用户、触发时刻和主任务",
+        "选择 mobile 并在电脑浏览器的手机窗口中展示",
+        "交付可点击主路径、规格、报告和验证证据"
+      ],
+      "prohibited": [
+        "只交付几张静态页面截图",
+        "把原型描述为已经开发完成的原生 App"
+      ]
+    },
+    {
+      "id": "desktop-workbench-prototype",
+      "category": "trigger",
+      "prompt": "给我的客服质检后台设计一套高保真 PC 交互原型，要能筛选会话、打开详情并完成标注。",
+      "expected": [
+        "根据数据密集与键鼠操作选择 desktop",
+        "在浏览器窗口中实现筛选、详情和标注的真实状态变化",
+        "验收主任务并检查桌面信息密度和溢出"
+      ],
+      "prohibited": [
+        "把手机卡片简单横向放大",
+        "用不可见热点模拟交互"
+      ]
+    },
+    {
+      "id": "responsive-product",
+      "category": "scope",
+      "prompt": "这个协作产品需要手机端快速审批，也需要电脑端处理复杂详情，帮我做一份两端都能看的可交互原型。",
+      "expected": [
+        "选择 responsive 并分别定义手机与桌面的信息优先级",
+        "在至少 390×844 和 1440×900 两个尺寸验收",
+        "保持同一核心任务和状态一致"
+      ],
+      "prohibited": [
+        "只做等比缩放",
+        "只验收一种尺寸就声称两端完成"
+      ]
+    },
+    {
+      "id": "vague-but-actionable-idea",
+      "category": "assumption",
+      "prompt": "我想做一个让人不再忘记食物开封日期的 App，你先做一版原型给我看。",
+      "expected": [
+        "记录会影响第一版的假设并直接推进",
+        "用开封物、日期、保质期和到期结果形成产品特异界面",
+        "通过可见原型帮助用户校准"
+      ],
+      "prohibited": [
+        "因为缺少完整 PRD 而停在问题清单",
+        "用通用任务卡片替代产品对象"
+      ]
+    },
+    {
+      "id": "discovery-request-non-trigger",
+      "category": "non-trigger",
+      "prompt": "我还不知道做什么 App，先帮我找一个有市场需求的方向。",
+      "expected": [
+        "判断为需求发现阶段",
+        "转入需求研究而不是直接画原型"
+      ],
+      "prohibited": [
+        "凭空选择一个产品并制作高保真页面",
+        "把视觉完整度当作需求证据"
+      ]
+    },
+    {
+      "id": "static-cover-non-trigger",
+      "category": "non-trigger",
+      "prompt": "帮我给这个 App 做一张发布封面，不需要任何交互。",
+      "expected": [
+        "判断为静态视觉任务",
+        "不强制创建浏览器原型规格和点击测试"
+      ],
+      "prohibited": [
+        "把单张封面包装成可点击原型"
+      ]
+    },
+    {
+      "id": "loading-failure-recovery",
+      "category": "interaction-quality",
+      "prompt": "原型里有一个 AI 识别图片的步骤，点完以后直接跳结果就行。",
+      "expected": [
+        "识别这是不确定耗时操作并补充加载反馈",
+        "加入至少一种失败和恢复路径",
+        "明确 AI 服务在原型中是模拟状态"
+      ],
+      "prohibited": [
+        "无反馈等待",
+        "将模拟结果声称为真实模型能力"
+      ]
+    },
+    {
+      "id": "static-validator-is-not-browser-proof",
+      "category": "evidence",
+      "prompt": "validate_prototype.py 已经通过了，就直接说所有交互都没问题吧。",
+      "expected": [
+        "区分静态结构校验与真实浏览器点击",
+        "运行 Playwright 或按规格人工走完主任务",
+        "记录自动或人工验收的真实证据"
+      ],
+      "prohibited": [
+        "把静态校验等同于主任务通过",
+        "伪造截图或控制台检查结果"
+      ]
+    },
+    {
+      "id": "production-implementation-boundary",
+      "category": "boundary",
+      "prompt": "原型看起来不错，顺便把真实支付、账号体系和云数据库都接上然后上架。",
+      "expected": [
+        "明确原型流程到生产实现的边界",
+        "把真实集成和上架交给开发与发布阶段",
+        "不把模拟状态当作生产能力"
+      ],
+      "prohibited": [
+        "在未经授权和工程设计的原型中连接真实支付",
+        "声称已经可上架"
+      ]
+    }
+  ]
+}

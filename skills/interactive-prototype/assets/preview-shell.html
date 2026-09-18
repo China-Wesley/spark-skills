@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-CN" data-prototype-shell data-mode="__PROTOTYPE_MODE__">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>__PROTOTYPE_TITLE__ · 交互原型</title>
+  <script>
+    window.__prototypeDiagnostics = { errors: [] };
+    window.addEventListener('error', event => window.__prototypeDiagnostics.errors.push(String(event.error || event.message)));
+    window.addEventListener('unhandledrejection', event => window.__prototypeDiagnostics.errors.push(String(event.reason)));
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --stage: #11120f;
+      --panel: rgba(27, 29, 25, .86);
+      --line: rgba(255, 255, 255, .11);
+      --muted: #a7aa9f;
+      --text: #f5f6f1;
+      --accent: #d8ff65;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; min-width: 320px; height: 100%; margin: 0; }
+
+    body {
+      overflow: hidden;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(216, 255, 101, .08), transparent 28%),
+        linear-gradient(145deg, #171813 0%, #0c0d0b 68%);
+    }
+
+    button, select, a { font: inherit; }
+
+    .workspace {
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr);
+      width: 100%;
+      height: 100%;
+    }
+
+    .toolbar {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(12, 13, 11, .78);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand { min-width: 0; margin-right: auto; }
+    .eyebrow { color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { overflow: hidden; margin: 3px 0 0; font-size: 16px; line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+
+    .control {
+      min-height: 36px;
+      padding: 0 13px;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .055);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .control:hover { border-color: rgba(216, 255, 101, .55); background: rgba(216, 255, 101, .08); }
+    .control:focus-visible { outline: 3px solid rgba(216, 255, 101, .42); outline-offset: 2px; }
+    select.control { appearance: none; padding-right: 32px; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 16px) 15px, calc(100% - 11px) 15px; background-repeat: no-repeat; background-size: 5px 5px; }
+
+    .stage {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .stage::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      opacity: .25;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(circle at center, black, transparent 72%);
+    }
+
+    .stage-inner {
+      position: absolute;
+      inset: 28px;
+      display: grid;
+      place-items: center;
+    }
+
+    .device {
+      --device-width: __VIEWPORT_WIDTH__px;
+      --device-height: __VIEWPORT_HEIGHT__px;
+      position: absolute;
+      width: var(--device-width);
+      height: var(--device-height);
+      transform: scale(var(--device-scale, 1));
+      transform-origin: center center;
+      transition: width .24s ease, height .24s ease, transform .18s ease, border-radius .24s ease;
+    }
+
+    .device.phone {
+      padding: 10px;
+      border: 1px solid #393b38;
+      border-radius: 58px;
+      background: #050505;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, .62), 0 0 0 2px #050505;
+    }
+
+    .device.phone::before {
+      position: absolute;
+      z-index: 3;
+      top: 18px;
+      left: 50%;
+      width: 112px;
+      height: 31px;
+      content: "";
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: #050505;
+      pointer-events: none;
+    }
+
+    .device.phone::after {
+      position: absolute;
+      z-index: 3;
+      bottom: 17px;
+      left: 50%;
+      width: 124px;
+      height: 5px;
+      content: "";
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .6);
+      pointer-events: none;
+    }
+
+    .device.browser {
+      padding-top: 42px;
+      border: 1px solid #3b3d38;
+      border-radius: 18px;
+      background: #1c1e1a;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, .5);
+    }
+
+    .browser-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: none;
+      align-items: center;
+      gap: 7px;
+      height: 42px;
+      padding: 0 14px;
+      color: #85887e;
+      font-size: 11px;
+    }
+
+    .browser .browser-bar { display: flex; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #5b5e56; }
+    .address { overflow: hidden; flex: 1; margin-left: 8px; padding: 6px 12px; border: 1px solid rgba(255,255,255,.07); border-radius: 7px; background: rgba(255,255,255,.04); text-overflow: ellipsis; white-space: nowrap; }
+
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: 0;
+      background: #fff;
+    }
+
+    .phone .screen { border-radius: 48px; }
+    .browser .screen { border-radius: 0 0 17px 17px; }
+
+    .hint {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      max-width: min(360px, calc(100% - 32px));
+      padding: 8px 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(12, 13, 11, .74);
+      font-size: 11px;
+      backdrop-filter: blur(12px);
+    }
+
+    body.presentation .toolbar, body.presentation .hint { display: none; }
+    body.presentation .workspace { grid-template-rows: 1fr; }
+    body.presentation .stage-inner { inset: 12px; }
+
+    @media (max-width: 760px) {
+      .toolbar { padding: 0 10px; }
+      .toolbar .optional { display: none; }
+      .stage-inner { inset: 12px; }
+      .hint { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="workspace">
+    <header class="toolbar" aria-label="原型预览工具栏">
+      <div class="brand">
+        <div class="eyebrow">Interactive prototype</div>
+        <h1>__PROTOTYPE_TITLE__</h1>
+      </div>
+      <label class="optional">
+        <span class="sr-only" hidden>预览设备</span>
+        <select class="control" id="device-select" aria-label="预览设备">
+          <option value="phone">手机 · 390 × 844</option>
+          <option value="compact">小屏手机 · 360 × 780</option>
+          <option value="desktop">桌面 · 1440 × 900</option>
+        </select>
+      </label>
+      <button class="control" id="reset-button" type="button">重新开始</button>
+      <a class="control optional" href="prototype.html" target="_blank" rel="noopener">单独打开</a>
+      <button class="control optional" id="present-button" type="button" aria-pressed="false">演示模式</button>
+    </header>
+    <section class="stage" aria-label="交互原型预览区">
+      <div class="stage-inner" id="stage-inner">
+        <div class="device phone" id="device" data-prototype-device>
+          <div class="browser-bar" aria-hidden="true">
+            <i class="dot"></i><i class="dot"></i><i class="dot"></i>
+            <span class="address">prototype.local / __PROTOTYPE_TITLE__</span>
+          </div>
+          <iframe class="screen" id="prototype-frame" src="prototype.html" title="__PROTOTYPE_TITLE__ 交互原型"></iframe>
+        </div>
+      </div>
+      <div class="hint">R 重置 · P 演示模式 · 原型也可单独打开</div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const presets = {
+        phone: { width: 410, height: 864, kind: 'phone' },
+        compact: { width: 380, height: 800, kind: 'phone' },
+        desktop: { width: 1440, height: 942, kind: 'browser' }
+      };
+      const defaultMode = '__PROTOTYPE_MODE__';
+      const stage = document.getElementById('stage-inner');
+      const device = document.getElementById('device');
+      const frame = document.getElementById('prototype-frame');
+      const select = document.getElementById('device-select');
+      const presentButton = document.getElementById('present-button');
+
+      function fit() {
+        const width = Number.parseFloat(getComputedStyle(device).getPropertyValue('--device-width'));
+        const height = Number.parseFloat(getComputedStyle(device).getPropertyValue('--device-height'));
+        const scale = Math.min(stage.clientWidth / width, stage.clientHeight / height, 1);
+        device.style.setProperty('--device-scale', String(Math.max(.2, scale)));
+      }
+
+      function setPreset(name) {
+        const preset = presets[name] || presets.phone;
+        device.style.setProperty('--device-width', `${preset.width}px`);
+        device.style.setProperty('--device-height', `${preset.height}px`);
+        device.classList.toggle('phone', preset.kind === 'phone');
+        device.classList.toggle('browser', preset.kind === 'browser');
+        select.value = name;
+        requestAnimationFrame(fit);
+      }
+
+      function reset() {
+        frame.src = `prototype.html?reset=${Date.now()}`;
+      }
+
+      function togglePresentation() {
+        const active = document.body.classList.toggle('presentation');
+        presentButton.setAttribute('aria-pressed', String(active));
+        requestAnimationFrame(fit);
+      }
+
+      select.addEventListener('change', event => setPreset(event.target.value));
+      document.getElementById('reset-button').addEventListener('click', reset);
+      presentButton.addEventListener('click', togglePresentation);
+      window.addEventListener('resize', fit);
+      window.addEventListener('keydown', event => {
+        if (event.target.matches('input, textarea, select')) return;
+        if (event.key.toLowerCase() === 'r') reset();
+        if (event.key.toLowerCase() === 'p') togglePresentation();
+      });
+
+      const initialPreset = defaultMode === 'desktop' ? 'desktop' : 'phone';
+      setPreset(initialPreset);
+      new ResizeObserver(fit).observe(stage);
+      window.__prototypeDiagnostics.ready = true;
+    })();
+  </script>
+</body>
+</html>

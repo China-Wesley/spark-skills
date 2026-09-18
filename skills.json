@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-09-17",
+  "updated": "2026-09-18",
   "repository": "China-Wesley/spark-skills",
   "format": {
     "name": "Agent Skills",
@@ -99,6 +99,46 @@
       "install": {
         "type": "subdirectory",
         "source": "skills/daily-app-concept"
+      }
+    },
+    {
+      "name": "interactive-prototype",
+      "path": "skills/interactive-prototype",
+      "entrypoint": "skills/interactive-prototype/SKILL.md",
+      "status": "available",
+      "category": "experience-design",
+      "compatibility": "Agent Skills-compatible clients with a writable workspace and browser access; optional Playwright provides automated journey verification.",
+      "lifecycle_stages": [
+        "design"
+      ],
+      "summary": "Turn a defined product idea into a mobile-first or desktop high-fidelity prototype that opens in a browser, supports real interaction, and includes a verifiable primary journey.",
+      "summary_zh": "把已有方向的产品想法整理成用户任务、页面状态和真实交互，并交付可在电脑浏览器中打开和验收的移动端或桌面端高保真原型。",
+      "keywords": [
+        "interactive prototype",
+        "high fidelity prototype",
+        "mobile app prototype",
+        "desktop prototype",
+        "browser prototype",
+        "ui design",
+        "ux flow",
+        "clickable demo",
+        "交互原型",
+        "高保真原型",
+        "用户动线",
+        "UI 设计"
+      ],
+      "deliverables": [
+        "index.html browser preview",
+        "prototype.html interactive product",
+        "prototype-brief.md",
+        "prototype-spec.json",
+        "prototype-report.md",
+        "browser validation screenshots"
+      ],
+      "evals": "skills/interactive-prototype/evals/cases.json",
+      "install": {
+        "type": "subdirectory",
+        "source": "skills/interactive-prototype"
       }
     }
   ]

@@ -24,6 +24,12 @@ Spark Skills 是一个帮助大家成为独立开发者的通用 Agent Skills �
 从 https://github.com/China-Wesley/spark-skills 安装 daily-app-concept Skill，并用它发现和验证一个移动 App 机会。
 ```
 
+如果已经有产品想法，需要直接做成可点击原型：
+
+```text
+从 https://github.com/China-Wesley/spark-skills 安装 interactive-prototype Skill，把我的产品想法做成能在电脑浏览器中打开和验收的高保真交互原型。
+```
+
 ## 这个仓库会收录什么
 
 - **需求发现**：从近期用户反馈、市场信号和现有替代方案中识别值得解决的问题。
@@ -56,7 +62,7 @@ flowchart LR
 | 发现需求 | 是否存在真实、具体的用户问题？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
 | 验证机会 | 用户、市场证据和技术现实是否支持这个机会？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
 | 定义产品 | 一个人能够实现的最小有用产品是什么？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
-| 设计体验 | 核心行为、状态和视觉语言应该怎样工作？ | [`daily-app-concept`](skills/daily-app-concept/) | 可用 |
+| 设计体验 | 核心行为、状态和视觉语言应该怎样工作？ | [`interactive-prototype`](skills/interactive-prototype/) | 可用 |
 | 开发实现 | 怎样在不突破 MVP 边界的前提下实现 App？ | — | 规划中 |
 | 测试打磨 | 产品是否可靠、可访问、保护隐私并达到发布标准？ | — | 规划中 |
 | App Store 上架 | 元数据、截图、合规、TestFlight 和审核材料是否齐全？ | — | 规划中 |
@@ -67,6 +73,7 @@ flowchart LR
 | Skill | 用途 | 主要交付物 | 状态 |
 | --- | --- | --- | --- |
 | [`daily-app-concept`](skills/daily-app-concept/) | 从近期真实反馈中发现一个移动产品需求，将其收窄成适合个人开发者验证的 App 概念，再从产品行为推导原创视觉系统并制作完整示意图。 | 调研记录、产品定义、视觉系统、清单文件和 5–7 张 App 概念图。 | 可用 |
+| [`interactive-prototype`](skills/interactive-prototype/) | 把已有方向的产品想法整理成用户任务、状态与交互动线，并做成电脑浏览器中可直接操作的移动端或桌面端高保真原型。 | 浏览器展示页、交互产品、产品契约、可执行主路径、验收报告与截图。 | 可用 |
 
 机器可读目录位于 [`skills.json`](skills.json)，其中记录了生命周期阶段、检索关键词、安装路径、交付物和可用状态，让 Agent 无需解析整篇 README 就能准确选择 Skill。
 
@@ -92,6 +99,23 @@ flowchart LR
 ```
 
 完整说明见 [`skills/daily-app-concept/SKILL.md`](skills/daily-app-concept/SKILL.md)。
+
+### `interactive-prototype`
+
+这个 Skill 衔接产品定义与开发实现。它先把想法整理成一条最需要验证的用户任务，再从任务推导页面、局部状态、反馈和恢复路径。交付物可直接在电脑浏览器中打开：移动端显示在可缩放的手机窗口中，桌面端显示在浏览器窗口中，并保留原型单独打开入口。
+
+它不会把几张静态图当作交互原型，也不会把模拟的登录、支付、AI 或数据保存描述成生产能力。完整结果需要静态结构校验和真实浏览器点击证据。
+
+```mermaid
+flowchart LR
+    A[产品想法] --> B[产品契约]
+    B --> C[主任务与状态]
+    C --> D[高保真浏览器原型]
+    D --> E[主路径点击验收]
+    E --> F[交给开发实现]
+```
+
+完整说明见 [`skills/interactive-prototype/SKILL.md`](skills/interactive-prototype/SKILL.md)。
 
 ## 工作原则
 
@@ -120,6 +144,7 @@ Agent Skills 规范定义 Skill 包的结构，具体安装目录由各个 Agent
 SPARK_AGENT_SKILLS_DIR="/当前Agent使用的Skills绝对路径"
 mkdir -p "$SPARK_AGENT_SKILLS_DIR"
 ln -s "$(pwd)/skills/daily-app-concept" "$SPARK_AGENT_SKILLS_DIR/daily-app-concept"
+ln -s "$(pwd)/skills/interactive-prototype" "$SPARK_AGENT_SKILLS_DIR/interactive-prototype"
 ```
 
 如果当前 Agent 支持从 Git 仓库和子目录直接安装，可以读取 [`skills.json`](skills.json) 中的 `install.source`。真正可移植的安装单元是单个 Skill 目录，而不是整个仓库。
@@ -136,6 +161,8 @@ git pull --ff-only
 
 ```text
 使用 daily-app-concept Skill 调研一个近期移动端需求，并交付包含实际图片的完整 App 概念。
+
+使用 interactive-prototype Skill 把这个产品想法做成在电脑浏览器中可操作并完成主路径验收的高保真原型。
 ```
 
 使用前先阅读对应的 `SKILL.md`。部分 Skill 会按需读取 `references/` 中的详细规则，调用 `scripts/` 中的工具，或使用 `assets/` 中的模板与素材。
@@ -175,19 +202,27 @@ spark-skills/
 ├── scripts/
 │   └── validate_catalog.py
 └── skills/
-    └── daily-app-concept/
+    ├── daily-app-concept/
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   │   └── openai.yaml       # 可选的 OpenAI 客户端元数据
+    │   ├── evals/
+    │   │   └── cases.json        # 触发、边界、失败与证据用例
+    │   ├── references/
+    │   │   ├── deliverables.md
+    │   │   ├── evidence-and-selection.md
+    │   │   └── visual-system.md
+    │   └── scripts/
+    │       ├── check_novelty.py
+    │       └── validate_output.py
+    └── interactive-prototype/
         ├── SKILL.md
+        ├── THIRD_PARTY_NOTICES.md
         ├── agents/
-        │   └── openai.yaml       # 可选的 OpenAI 客户端元数据
+        ├── assets/
         ├── evals/
-        │   └── cases.json        # 触发、边界、失败与证据用例
         ├── references/
-        │   ├── deliverables.md
-        │   ├── evidence-and-selection.md
-        │   └── visual-system.md
         └── scripts/
-            ├── check_novelty.py
-            └── validate_output.py
 ```
 
 每个 Skill 都把主要指令放在 `SKILL.md` 中，只在确实有用时增加辅助资源：
@@ -219,7 +254,7 @@ spark-skills/
 
 ## 设计参考
 
-本仓库的导航和目录设计参考了 [`alchaincyf/huashu-skills`](https://github.com/alchaincyf/huashu-skills) 在“面向人的需求路由、机器可读 Skill 索引和明确安装协议”上的做法。Spark Skills 只吸收这些高层模式，并将其重新应用于原创的独立 App 生命周期；仓库没有复制对方的 Skill 文案或实现代码。
+本仓库的导航和目录设计参考了 [`alchaincyf/huashu-skills`](https://github.com/alchaincyf/huashu-skills) 在“面向人的需求路由、机器可读 Skill 索引和明确安装协议”上的做法。`interactive-prototype` 另参考并改造了 MIT 开源项目 [`alchaincyf/huashu-design`](https://github.com/alchaincyf/huashu-design) 的 HTML 原型与浏览器验收方法，具体来源、改造边界和许可证保留在该 Skill 的 [`THIRD_PARTY_NOTICES.md`](skills/interactive-prototype/THIRD_PARTY_NOTICES.md)。
 
 ## 许可协议
 

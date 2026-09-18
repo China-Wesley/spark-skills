@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN" data-scaffold="true" data-prototype-mode="__PROTOTYPE_MODE__">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>__PROTOTYPE_TITLE__</title>
+  <script>
+    window.__prototypeDiagnostics = { errors: [] };
+    window.addEventListener('error', event => window.__prototypeDiagnostics.errors.push(String(event.error || event.message)));
+    window.addEventListener('unhandledrejection', event => window.__prototypeDiagnostics.errors.push(String(event.reason)));
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --ink: #192018;
+      --muted: #667064;
+      --paper: #f4f1e8;
+      --surface: #fffdf7;
+      --line: #d9d8ce;
+      --accent: #2d5b3f;
+      --accent-soft: #deeadf;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body { color: var(--ink); background: var(--paper); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      width: 100%;
+      min-height: 100vh;
+      padding: max(54px, env(safe-area-inset-top)) 22px max(36px, env(safe-area-inset-bottom));
+      background:
+        linear-gradient(rgba(255,255,255,.3), rgba(255,255,255,0)),
+        var(--paper);
+    }
+
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 34px; }
+    .brand { font-size: 14px; font-weight: 800; letter-spacing: -.02em; }
+    .step { color: var(--muted); font-size: 12px; }
+    .screen[hidden] { display: none; }
+    .screen { width: min(100%, 620px); margin: 0 auto; }
+    .kicker { margin: 0 0 10px; color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 0; max-width: 12ch; font-family: ui-serif, Georgia, serif; font-size: clamp(36px, 9vw, 64px); font-weight: 500; line-height: .98; letter-spacing: -.055em; text-wrap: balance; }
+    .lead { margin: 20px 0 28px; max-width: 34em; color: var(--muted); font-size: 15px; line-height: 1.65; }
+
+    .card { padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255, 253, 247, .88); box-shadow: 0 16px 40px rgba(42, 48, 39, .07); }
+    .card + .card { margin-top: 12px; }
+    .label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    input { width: 100%; min-height: 50px; padding: 0 14px; color: var(--ink); border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+    input:focus { outline: 3px solid rgba(45, 91, 63, .2); border-color: var(--accent); }
+
+    .primary, .secondary { min-height: 50px; padding: 0 18px; border-radius: 999px; font-weight: 800; }
+    .primary { width: 100%; color: white; border: 1px solid var(--accent); background: var(--accent); }
+    .primary:hover { filter: brightness(1.08); }
+    .secondary { color: var(--ink); border: 1px solid var(--line); background: transparent; }
+    .actions { display: flex; gap: 10px; margin-top: 18px; }
+    .actions .primary { flex: 1; width: auto; }
+    button:focus-visible { outline: 3px solid rgba(45, 91, 63, .32); outline-offset: 3px; }
+
+    .summary { display: grid; gap: 8px; margin-top: 28px; }
+    .summary-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 0; border-top: 1px solid var(--line); }
+    .summary-row span { color: var(--muted); font-size: 12px; }
+    .summary-row strong { font-size: 13px; }
+
+    .loader { width: 42px; height: 42px; margin: 54px auto 22px; border: 4px solid var(--accent-soft); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+    .center { text-align: center; }
+    .center h1 { max-width: none; }
+    .success-mark { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 22px; color: white; border-radius: 50%; background: var(--accent); font-size: 25px; }
+    .result { margin: 30px 0; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .result small { display: block; margin-bottom: 7px; color: var(--muted); }
+    .result strong { font-family: ui-serif, Georgia, serif; font-size: 26px; font-weight: 500; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (min-width: 900px) {
+      .app { display: grid; align-content: center; min-height: 100vh; padding: 64px; }
+      .screen { width: min(100%, 920px); }
+      .screen[data-screen="home"] { grid-template-columns: minmax(0, 1fr) 340px; align-items: end; gap: 64px; }
+      .screen[data-screen="home"] .intro { grid-column: 1; }
+      .screen[data-screen="home"] .card { grid-column: 2; grid-row: 1 / span 2; }
+      h1 { font-size: clamp(56px, 6vw, 86px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topline">
+      <div class="brand">__PROTOTYPE_TITLE__</div>
+      <div class="step" id="step-label">01 / 03</div>
+    </div>
+
+    <section class="screen" data-screen="home">
+      <div class="intro">
+        <p class="kicker">核心任务</p>
+        <h1>让一个想法开始流动。</h1>
+        <p class="lead">这是一份可运行骨架。请用产品的真实对象、内容和动作替换当前示例，再把主任务写入规格文件。</p>
+      </div>
+      <div class="card">
+        <strong>本次要验证什么？</strong>
+        <p class="lead">用户能否在不学习说明书的情况下，完成最重要的一件事。</p>
+        <button class="primary" type="button" data-test="start" data-action="start">开始核心任务</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="compose" hidden>
+      <p class="kicker">必要输入</p>
+      <h1>只留下会改变结果的信息。</h1>
+      <p class="lead">输入一个具体目标，下一步会把它变成可见结果。</p>
+      <div class="card">
+        <label class="label" for="goal-input">你的目标</label>
+        <input id="goal-input" data-test="goal-input" autocomplete="off" value="做出第一版可点击原型">
+        <div class="summary">
+          <div class="summary-row"><span>动作</span><strong>创建核心任务</strong></div>
+          <div class="summary-row"><span>结果</span><strong>得到即时反馈</strong></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="secondary" type="button" data-test="back-home">返回</button>
+        <button class="primary" type="button" data-test="submit">确认并继续</button>
+      </div>
+    </section>
+
+    <section class="screen center" data-screen="processing" hidden aria-live="polite">
+      <div class="loader" aria-hidden="true"></div>
+      <h1>正在形成结果</h1>
+      <p class="lead" style="margin-inline:auto">即使是模拟的耗时操作，也应该让用户知道系统正在做什么。</p>
+    </section>
+
+    <section class="screen" data-screen="result" hidden aria-live="polite">
+      <div class="success-mark" aria-hidden="true">✓</div>
+      <p class="kicker">任务完成</p>
+      <h1>结果已经发生。</h1>
+      <div class="result">
+        <small>刚刚创建</small>
+        <strong data-test="result-title">做出第一版可点击原型</strong>
+      </div>
+      <button class="primary" type="button" data-test="restart">再走一次</button>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const screens = [...document.querySelectorAll('[data-screen]')];
+      const stepLabel = document.getElementById('step-label');
+      const stepNumbers = { home: '01 / 03', compose: '02 / 03', processing: '02 / 03', result: '03 / 03' };
+
+      function showScreen(name) {
+        screens.forEach(screen => { screen.hidden = screen.dataset.screen !== name; });
+        stepLabel.textContent = stepNumbers[name] || '';
+        window.parent.postMessage({ type: 'prototype:screen', screen: name }, '*');
+      }
+
+      document.querySelector('[data-test="start"]').addEventListener('click', () => showScreen('compose'));
+      document.querySelector('[data-test="back-home"]').addEventListener('click', () => showScreen('home'));
+      document.querySelector('[data-test="submit"]').addEventListener('click', () => {
+        const value = document.querySelector('[data-test="goal-input"]').value.trim();
+        if (!value) {
+          document.querySelector('[data-test="goal-input"]').focus();
+          return;
+        }
+        showScreen('processing');
+        setTimeout(() => {
+          document.querySelector('[data-test="result-title"]').textContent = value;
+          showScreen('result');
+        }, 420);
+      });
+      document.querySelector('[data-test="restart"]').addEventListener('click', () => showScreen('home'));
+      showScreen('home');
+      window.__prototypeDiagnostics.ready = true;
+    })();
+  </script>
+</body>
+</html>

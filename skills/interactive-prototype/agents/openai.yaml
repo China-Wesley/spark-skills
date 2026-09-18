@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interactive Prototype"
+  short_description: "把移动端或桌面端产品想法变成浏览器中可点击验收的高保真原型"
+  default_prompt: "Use $interactive-prototype to turn this product idea into a high-fidelity browser prototype with a verified primary journey."
