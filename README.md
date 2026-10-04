@@ -6,9 +6,11 @@
 
 Spark Skills is a growing collection of portable Agent Skills designed to help people become independent app developers. It breaks the path from discovering a real need to shipping an App Store product into focused workflows that can be used one stage at a time.
 
-Each skill covers a practical part of the product lifecycle with clear triggers, decision criteria, concrete deliverables, and deterministic validation where possible. The long-term goal is a connected skill set that can guide a solo developer from opportunity discovery, product definition, and interface design through implementation, testing, App Store submission, launch, and iteration.
+Each App-development skill covers a practical part of the product lifecycle with clear triggers, decision criteria, concrete deliverables, and deterministic validation where possible. The long-term goal is a connected skill set that can guide a solo developer from opportunity discovery, product definition, and interface design through implementation, testing, App Store submission, launch, and iteration.
 
 The core packages follow the open [Agent Skills specification](https://agentskills.io/specification): each skill has a portable `SKILL.md` entrypoint and may include `references/`, `scripts/`, and `assets/`. Client-specific metadata is optional and never required to understand or execute the core workflow.
+
+The collection also includes a companion workflow for everyday decisions: [book-life-advisor](skills/book-life-advisor/) answers strictly from HowToLiveBetter with traceable citations. A [PDF reading copy](books/HowToLiveBetter.pdf) is available separately.
 
 ## 30-second start
 
@@ -28,6 +30,12 @@ If you already have a product direction and need a clickable prototype:
 
 ```text
 Install the interactive-prototype skill from https://github.com/China-Wesley/spark-skills and turn my product idea into a high-fidelity prototype that I can open and verify in a desktop browser.
+```
+
+For life questions answered strictly from HowToLiveBetter:
+
+```text
+Install book-life-advisor from https://github.com/China-Wesley/spark-skills. Answer only from the bundled book and cite each suggestion with its chapter, item, original title, and source.
 ```
 
 ## What belongs here
@@ -74,8 +82,11 @@ The repository will grow along this path. The lifecycle table below separates wh
 | --- | --- | --- | --- |
 | [`daily-app-concept`](skills/daily-app-concept/) | Find a current mobile product need, narrow it into a solo-developer-friendly App concept, derive an original visual system from product behavior, and create a coherent concept image set. | Research notes, product definition, visual system, manifest, and 5–7 App concept images. | Available |
 | [`interactive-prototype`](skills/interactive-prototype/) | Turn a defined product direction into a user journey, product states, and a high-fidelity mobile or desktop prototype that can be operated in a desktop browser. | Browser preview, interactive product, product brief, executable primary journey, validation report, and screenshots. | Available |
+| [`book-life-advisor`](skills/book-life-advisor/) | Answer life questions strictly from the full HowToLiveBetter snapshot, preserving applicability and evidence limits. | Advice with chapter/item citations, original titles, pinned links, and book sources; explicit limits when evidence is insufficient. | Available |
 
 The machine-readable catalog is [`skills.json`](skills.json). It records lifecycle coverage, discovery keywords, installation paths, deliverables, and availability so an Agent can select a skill without parsing the full README.
+
+Companion skills outside App development use an empty `lifecycle_stages` list; match them by `category`, `keywords`, and `summary`.
 
 ### `daily-app-concept`
 
@@ -117,6 +128,12 @@ flowchart LR
 
 Read the full instructions in [`skills/interactive-prototype/SKILL.md`](skills/interactive-prototype/SKILL.md).
 
+### `book-life-advisor`
+
+[Book Life Advisor](skills/book-life-advisor/README.md) includes all 34 chapters and 654 entries, pinned to the 2026-10-04 `bd25430` snapshot. It retrieves and reads complete entries before answering, cites only supported advice, and treats missing evidence and outdated rules explicitly. Optional Python 3.9+ helpers run offline; Agents can also read the Markdown directly.
+
+The book is by eternity4719 and its text is CC BY 4.0. A separate [PDF reading copy](books/HowToLiveBetter.pdf) and [provenance note](books/README.md) are included; the Skill can be installed without the PDF.
+
 ## Working principles
 
 Spark Skills follows a few recurring principles:
@@ -145,6 +162,7 @@ SPARK_AGENT_SKILLS_DIR="/absolute/path/to/your-agent/skills"
 mkdir -p "$SPARK_AGENT_SKILLS_DIR"
 ln -s "$(pwd)/skills/daily-app-concept" "$SPARK_AGENT_SKILLS_DIR/daily-app-concept"
 ln -s "$(pwd)/skills/interactive-prototype" "$SPARK_AGENT_SKILLS_DIR/interactive-prototype"
+ln -s "$(pwd)/skills/book-life-advisor" "$SPARK_AGENT_SKILLS_DIR/book-life-advisor"
 ```
 
 If your Agent supports installation from a Git repository and subdirectory, use the `install.source` value in [`skills.json`](skills.json). The portable unit is the individual skill directory, not the whole repository.
@@ -199,9 +217,20 @@ spark-skills/
 ├── README.zh-CN.md
 ├── skills.json
 ├── LICENSE
+├── books/
+│   ├── README.md
+│   └── HowToLiveBetter.pdf
 ├── scripts/
 │   └── validate_catalog.py
 └── skills/
+    ├── book-life-advisor/
+    │   ├── SKILL.md
+    │   ├── README.md
+    │   ├── ATTRIBUTION.md
+    │   ├── agents/
+    │   ├── evals/
+    │   ├── references/
+    │   └── scripts/
     ├── daily-app-concept/
     │   ├── SKILL.md
     │   ├── agents/
@@ -239,7 +268,7 @@ New skills are added when a workflow has been exercised enough to capture useful
 
 - A precise name and description that make automatic discovery reliable.
 - Frontmatter that stays compatible with the open Agent Skills specification.
-- A clear lifecycle stage, trigger, scope boundary, input, output, and handoff.
+- A clear category, applicable lifecycle stages, trigger, scope boundary, input, output, and handoff.
 - A concise `SKILL.md`, with conditional detail moved into `references/`.
 - Scripts only where repeatability or deterministic validation adds real value.
 - Concrete deliverables that can be inspected independently of the conversation.
@@ -258,4 +287,4 @@ The repository navigation and catalog design were informed by [`alchaincyf/huash
 
 ## License
 
-This repository is available under the [MIT License](LICENSE).
+Repository code and Skill instructions are available under the [MIT License](LICENSE), except where third-party notices specify otherwise. The HowToLiveBetter book text bundled with `book-life-advisor` and in the PDF remains **CC BY 4.0**, with attribution to eternity4719 and the original project. See the [Skill attribution](skills/book-life-advisor/ATTRIBUTION.md) and [PDF provenance](books/README.md).

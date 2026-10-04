@@ -113,8 +113,9 @@ def validate(root: Path) -> dict[str, Any]:
                 errors.append(f"{label}.{field} must be a non-empty string")
 
         linked_stages = skill.get("lifecycle_stages")
-        if not isinstance(linked_stages, list) or not linked_stages:
-            errors.append(f"{label}.lifecycle_stages must be a non-empty list")
+        # Companion skills outside App development use an empty stage list.
+        if not isinstance(linked_stages, list):
+            errors.append(f"{label}.lifecycle_stages must be a list (empty for non-App skills)")
         else:
             unknown = sorted(set(linked_stages) - stage_ids)
             if unknown:

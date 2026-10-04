@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "updated": "2026-09-18",
+  "updated": "2026-10-04",
   "repository": "China-Wesley/spark-skills",
   "format": {
     "name": "Agent Skills",
     "specification": "https://agentskills.io/specification",
     "portable_entrypoint": "SKILL.md"
   },
-  "purpose": "Portable Agent Skills for the independent App lifecycle, from demand discovery to App Store release and iteration.",
+  "purpose": "Portable Agent Skills for the independent App lifecycle, with companion workflows for evidence-grounded everyday decisions.",
   "lifecycle_stages": [
     {
       "id": "discover",
@@ -139,6 +139,39 @@
       "install": {
         "type": "subdirectory",
         "source": "skills/interactive-prototype"
+      }
+    },
+    {
+      "name": "book-life-advisor",
+      "path": "skills/book-life-advisor",
+      "entrypoint": "skills/book-life-advisor/SKILL.md",
+      "status": "available",
+      "category": "book-guidance",
+      "compatibility": "Agent Skills-compatible clients with local file access. Optional offline retrieval helpers use Python 3.9+ standard library only.",
+      "lifecycle_stages": [],
+      "summary": "Answer life questions using only a pinned full-text copy of HowToLiveBetter, with chapter, item, original source links, evidence grades, and explicit limits when the book does not support an answer.",
+      "summary_zh": "只依据《高性价比人生指南》完整固定快照回答人生困惑，每项建议标明节条、原标题、固定原文链接与书中来源；书中依据不足时明确说明。",
+      "keywords": [
+        "HowToLiveBetter",
+        "book advice",
+        "life decisions",
+        "source citations",
+        "offline book",
+        "高性价比人生指南",
+        "照书答人生",
+        "人生困惑",
+        "书内出处",
+        "只按书回答"
+      ],
+      "deliverables": [
+        "Book-grounded advice with chapter and item citations",
+        "Original source links and author evidence grades",
+        "Scope limits and applicable conditions"
+      ],
+      "evals": "skills/book-life-advisor/evals/cases.json",
+      "install": {
+        "type": "subdirectory",
+        "source": "skills/book-life-advisor"
       }
     }
   ]

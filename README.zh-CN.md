@@ -6,9 +6,11 @@
 
 Spark Skills 是一个帮助大家成为独立开发者的通用 Agent Skills 仓库。它把“发现真实需求，做出产品，再把 App 上架”这条复杂路径拆成可以逐步调用的工作流。
 
-每个 Skill 负责产品生命周期中的一个具体阶段，写清何时触发、依据什么做判断、如何推进、需要交付哪些文件，以及哪些结果可以通过脚本校验。长期目标是形成一套相互衔接的 Skills，让一个人也能从机会发现、产品定义和界面设计，一直走到开发、测试、App Store 审核、发布和后续迭代。
+独立开发类 Skill 负责产品生命周期中的一个具体阶段，写清何时触发、依据什么做判断、如何推进、需要交付哪些文件，以及哪些结果可以通过脚本校验。长期目标是形成一套相互衔接的 Skills，让一个人也能从机会发现、产品定义和界面设计，一直走到开发、测试、App Store 审核、发布和后续迭代。
 
 核心 Skill 遵循开放的 [Agent Skills 规范](https://agentskills.io/specification)：每个 Skill 都以可移植的 `SKILL.md` 为入口，并可按需附带 `references/`、`scripts/` 和 `assets/`。客户端专属元数据只是可选适配层，不影响其他 Agent 理解和执行核心工作流。
+
+仓库也收录有明确资料边界的生活决策 Skill：[照书答人生](skills/book-life-advisor/) 只依据《高性价比人生指南》回答问题，并提供可追溯出处；[PDF 阅读版](books/HowToLiveBetter.pdf) 可单独下载。
 
 ## 30 秒开始
 
@@ -28,6 +30,12 @@ Spark Skills 是一个帮助大家成为独立开发者的通用 Agent Skills �
 
 ```text
 从 https://github.com/China-Wesley/spark-skills 安装 interactive-prototype Skill，把我的产品想法做成能在电脑浏览器中打开和验收的高保真交互原型。
+```
+
+如果希望只按《高性价比人生指南》回答生活困惑：
+
+```text
+从 https://github.com/China-Wesley/spark-skills 安装 book-life-advisor Skill。回答时只依据内置原书，每项建议注明节条、原标题和出处。
 ```
 
 ## 这个仓库会收录什么
@@ -74,8 +82,11 @@ flowchart LR
 | --- | --- | --- | --- |
 | [`daily-app-concept`](skills/daily-app-concept/) | 从近期真实反馈中发现一个移动产品需求，将其收窄成适合个人开发者验证的 App 概念，再从产品行为推导原创视觉系统并制作完整示意图。 | 调研记录、产品定义、视觉系统、清单文件和 5–7 张 App 概念图。 | 可用 |
 | [`interactive-prototype`](skills/interactive-prototype/) | 把已有方向的产品想法整理成用户任务、状态与交互动线，并做成电脑浏览器中可直接操作的移动端或桌面端高保真原型。 | 浏览器展示页、交互产品、产品契约、可执行主路径、验收报告与截图。 | 可用 |
+| [`book-life-advisor`](skills/book-life-advisor/) | 只按《高性价比人生指南》的内置完整快照回答人生困惑，保留适用条件与证据边界。 | 附节条、原标题、固定链接与书中来源的建议；依据不足时明确说明。 | 可用 |
 
 机器可读目录位于 [`skills.json`](skills.json)，其中记录了生命周期阶段、检索关键词、安装路径、交付物和可用状态，让 Agent 无需解析整篇 README 就能准确选择 Skill。
+
+生活决策类 Skill 不属于 App 开发阶段，在目录中用空的 `lifecycle_stages` 列表表示；按 `category`、`keywords` 和 `summary` 匹配。
 
 ### `daily-app-concept`
 
@@ -117,6 +128,12 @@ flowchart LR
 
 完整说明见 [`skills/interactive-prototype/SKILL.md`](skills/interactive-prototype/SKILL.md)。
 
+### `book-life-advisor`
+
+[照书答人生](skills/book-life-advisor/README.md) 内置 34 节、654 条完整原文，固定到 2026-10-04 的 `bd25430` 版本。先检索并读完相关条目，再给书内能支持的建议；不补充书外常识，不把旧快照当成现行规则。Python 3.9+ 检索工具完全离线，也可直接读取 Markdown。
+
+原书由 eternity4719 创作，文字采用 CC BY 4.0。另附 [PDF 阅读版](books/HowToLiveBetter.pdf) 和[来源说明](books/README.md)，PDF 不影响 Skill 独立安装。
+
 ## 工作原则
 
 Spark Skills 会长期坚持几条方法：
@@ -145,6 +162,7 @@ SPARK_AGENT_SKILLS_DIR="/当前Agent使用的Skills绝对路径"
 mkdir -p "$SPARK_AGENT_SKILLS_DIR"
 ln -s "$(pwd)/skills/daily-app-concept" "$SPARK_AGENT_SKILLS_DIR/daily-app-concept"
 ln -s "$(pwd)/skills/interactive-prototype" "$SPARK_AGENT_SKILLS_DIR/interactive-prototype"
+ln -s "$(pwd)/skills/book-life-advisor" "$SPARK_AGENT_SKILLS_DIR/book-life-advisor"
 ```
 
 如果当前 Agent 支持从 Git 仓库和子目录直接安装，可以读取 [`skills.json`](skills.json) 中的 `install.source`。真正可移植的安装单元是单个 Skill 目录，而不是整个仓库。
@@ -199,9 +217,20 @@ spark-skills/
 ├── README.zh-CN.md
 ├── skills.json
 ├── LICENSE
+├── books/
+│   ├── README.md
+│   └── HowToLiveBetter.pdf
 ├── scripts/
 │   └── validate_catalog.py
 └── skills/
+    ├── book-life-advisor/
+    │   ├── SKILL.md
+    │   ├── README.md
+    │   ├── ATTRIBUTION.md
+    │   ├── agents/
+    │   ├── evals/
+    │   ├── references/
+    │   └── scripts/
     ├── daily-app-concept/
     │   ├── SKILL.md
     │   ├── agents/
@@ -239,7 +268,7 @@ spark-skills/
 
 - 精确的名称和描述，让自动发现足够可靠。
 - 保持兼容开放 Agent Skills 规范的 frontmatter。
-- 清楚的生命周期阶段、触发条件、范围边界、输入、输出和交接关系。
+- 清楚的应用类别、适用的生命周期阶段、触发条件、范围边界、输入、输出和交接关系。
 - 简洁的 `SKILL.md`，把条件性细节放进 `references/`。
 - 只在可重复执行或确定性校验确实有价值时增加脚本。
 - 脱离当前对话也能独立检查的实际交付物。
@@ -258,4 +287,4 @@ spark-skills/
 
 ## 许可协议
 
-本仓库使用 [MIT License](LICENSE)。
+除另有标注的第三方资料外，本仓库代码与 Skill 规则使用 [MIT License](LICENSE)。`book-life-advisor` 内置的《高性价比人生指南》文字与 PDF 原书文字使用 **CC BY 4.0**，保留作者 eternity4719 的署名、原项目链接和原许可。详见 [Skill 来源说明](skills/book-life-advisor/ATTRIBUTION.md) 和 [PDF 来源说明](books/README.md)。

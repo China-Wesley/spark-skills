@@ -1,0 +1,4 @@
+interface:
+  display_name: "照书答人生"
+  short_description: "只按《高性价比人生指南》回答困惑，每条建议附上书内位置与原文出处"
+  default_prompt: "请用 $book-life-advisor 回答我的人生困惑，只依据书内原文，并逐条注明章节、条目和出处。"
